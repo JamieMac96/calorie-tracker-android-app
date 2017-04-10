@@ -30,12 +30,52 @@ public class MyDatabaseHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase myDB){
-        myDB.execSQL("CREATE TABLE User (" +
-                "UserID INT NOT NULL PRIMARY KEY AUTOINCREMENT " +
-                "EmailAddress VARCHAR(255) UNIQUE" +
-                "UserName VARCHAR(45)" +
-                "Password VARCHAR(45) );");
+        myDB.execSQL("CREATE TABLE User ("                                  +
+                "UserID INT NOT NULL PRIMARY KEY AUTOINCREMENT,"            +
+                "EmailAddress VARCHAR(255) UNIQUE,"                         +
+                "Password VARCHAR(45));");
 
+        myDB.execSQL("  CREATE TABLE BodyweightEntry("                      +
+                    "   EntryID INT NOT NULL PRIMARY KEY AUTOINCREMENT,"    +
+                    "   User_UserID INT NOT NULL FOREIGN KEY,"              +
+                    "   Weight double NOT NULL,"                            +
+                    "   WeighInDate NOT NULL,"                              +
+                    "   FOREIGN KEY User_UserID REFERENCES User(UserID));");
+
+        myDB.execSQL("  CREATE TABLE DailyFood( "                           +
+                "       FoodID INT NOT NULL PRIMARY KEY AUTOINCREMENT,"     +
+                "       User_UserID INT NOT NULL, "                         +
+                "       Name VARCHAR(45) NOT NULL,"                         +
+                "       ServingSize double NOT NULL,"                       +
+                "       CaloriesPerServing double NOT NULL,"                +
+                "       ProteinPerServing double NOT NULL,"                 +
+                "       FatPerServing double NOT NULL,"                     +
+                "       CarbsPerServing double NOT NULL,"                   +
+                "       FOREIGN KEY User_UserID REFERNCES User(UserID));"
+        );
+
+        myDB.execSQL("  CREATE TABLE UserDetails("                          +
+                "       User_UsrID INT NOT NULL PRIMARY KEY AUTOINCREMENT," +
+                "       WeeklyGoal VARCHAR(45) NOT NULL,"                   +
+                "       InitialBodyweight double NOT NULL, "                +
+                "       Bodyweight double NOT NULL,"                        +
+                "       CalorieGoal INT NOT NULL,"                          +
+                "       ProteinGoalPercent INT NOT NULL,"                   +
+                "       CarbGoalPercent INT NOT NULL,"                      +
+                "       FatGoalPercent INT NOT NULL,"                       +
+                "       FOREIGN KEY User_UserID REFERENCES User(UserID)); ");
+
+        myDB.execSQL("  CREATE TABLE UserFood( "                            +
+                "       FoodID INT NOT NULL PRIMARY KEY AUTOINCREMENT,"     +
+                "       User_UserID INT NOT NULL, "                         +
+                "       Name VARCHAR(45) NOT NULL,"                         +
+                "       ServingSize double NOT NULL,"                       +
+                "       CaloriesPerServing double NOT NULL,"                +
+                "       ProteinPerServing double NOT NULL,"                 +
+                "       FatPerServing double NOT NULL,"                     +
+                "       CarbsPerServing double NOT NULL,"                   +
+                "       FOREIGN KEY User_UserID REFERNCES User(UserID));"
+        );
 
     }
 

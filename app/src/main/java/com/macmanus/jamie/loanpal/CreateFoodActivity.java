@@ -38,7 +38,7 @@ public class CreateFoodActivity extends Activity {
     private EditText carbsPerServing;
     private EditText proteinPerServing;
     private Button submitFoodButton;
-    private final String REQUEST_DESTINATION = "http://34.251.31.162/add-global-food.php";
+    private final String REQUEST_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/add-global-food.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,8 +134,14 @@ public class CreateFoodActivity extends Activity {
     }
 
     public boolean validateForm(){
-        return isPosNum(servingSize.getText().toString()) && isPosNum(fatPerServing.getText().toString()) &&
-                isPosNum(carbsPerServing.getText().toString()) && isPosNum(proteinPerServing.getText().toString());
+        if(isPosNum(servingSize.getText().toString()) && isPosNum(fatPerServing.getText().toString()) &&
+                isPosNum(carbsPerServing.getText().toString()) && isPosNum(proteinPerServing.getText().toString())){
+            if(title.getText().toString().length() <= 40 && description.getText().toString().length() <= 200 && servingSize.getText().toString().length() <= 5){
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private boolean isPosNum(String numberString){

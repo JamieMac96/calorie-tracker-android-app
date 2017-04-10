@@ -43,8 +43,8 @@ public class GoalsActivity extends Activity {
     private Spinner  weeklyGoalsDropdown;
     private Spinner  activityLevelDropDown;
     private Button submitButton;
-    private final String READ_DESTINATION = "http://34.251.31.162/get-goals.php";
-    private final String WRITE_DESTINATION = "http://34.251.31.162/update-goals.php";
+    private final String READ_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/get-goals.php";
+    private final String WRITE_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/update-goals.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -196,6 +196,7 @@ public class GoalsActivity extends Activity {
                 public void onResponse(JSONObject response) {
                     try {
                         boolean requestOutcome = response.getBoolean("success");
+                        Log.e("Response " + requestOutcome,"...response");
                         if(requestOutcome){
                             Toast.makeText(GoalsActivity.this, "goals updated", Toast.LENGTH_SHORT).show();
                         }
@@ -227,7 +228,7 @@ public class GoalsActivity extends Activity {
                 }
             };
 
-            CustomRequest request = new CustomRequest(Request.Method.POST, READ_DESTINATION, params, listener, errorListener);
+            CustomRequest request = new CustomRequest(Request.Method.POST, WRITE_DESTINATION, params, listener, errorListener);
 
             RequestQueueHelper helper = RequestQueueHelper.getInstance();
             helper.add(request);

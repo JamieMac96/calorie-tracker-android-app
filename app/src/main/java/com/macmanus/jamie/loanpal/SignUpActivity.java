@@ -38,7 +38,7 @@ public class SignUpActivity extends Activity {
     private EditText passwordConfirmView;
     private Button submitButton;
     private RequestQueueHelper helper = RequestQueueHelper.getInstance();
-    private final String REQUEST_DESTINATION = "http://34.251.31.162/register.php";
+    private final String REQUEST_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/register.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,8 +52,16 @@ public class SignUpActivity extends Activity {
         submitButton = (Button) findViewById(R.id.sign_up_button);
 
 
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         SessionManager manager = SessionManager.getInstance(getApplicationContext());
-        manager.logoutUser();
+        if(manager.isLoggedIn()){
+            goToMainActivity();
+        }
     }
 
     public void registerUser(View v){
@@ -84,8 +92,7 @@ public class SignUpActivity extends Activity {
                             Toast.makeText(SignUpActivity.this, "The sign up succeeded!", Toast.LENGTH_SHORT).show();
                             SessionManager manager = SessionManager.getInstance(getApplicationContext());
                             manager.createLoginSession(userID, emailAddr);
-                            Intent mainActivity = new Intent(SignUpActivity.this, MainActivity.class);
-                            startActivity(mainActivity);
+                            goToMainActivity();
                         }
                         else{
                             Toast.makeText(SignUpActivity.this, "The sign up failed", Toast.LENGTH_SHORT).show();
@@ -123,6 +130,11 @@ public class SignUpActivity extends Activity {
 
     }
 
+    private void goToMainActivity(){
+        Intent mainActivity = new Intent(SignUpActivity.this, MainActivity.class);
+        startActivity(mainActivity);
+    }
+
     private boolean validateConfirmPassword() {
         String confirmPassword = passwordConfirmView.getText().toString();
         String password = passwordView.getText().toString();
@@ -137,26 +149,31 @@ public class SignUpActivity extends Activity {
 
     private boolean validateEmail(){
         String email = emailView.getText().toString();
+        if(email.length() < 255) {
+            EmailValidator validator = EmailValidator.getInstance();
 
-        EmailValidator validator = EmailValidator.getInstance();
-
-        if(!validator.isValid(email)){
-            emailView.setError("Invalid email");
-            return false;
+            if (!validator.isValid(email)) {
+                emailView.setError("Invalid email");
+                return false;
+            }
+            else {
+                return true;
+            }
         }
-        return true;
+        return false;
     }
 
     private boolean validatePassword() {
         String password = passwordView.getText().toString();
-
-       if(password.matches("((?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,20})")){
-           return true;
-       }
-        else {
-           passwordView.setError("required: 8 characters with upper and lowecase letters and atleast one number.");
-           return false;
-       }
+        if(password.length() < 255) {
+            if (password.matches("((?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,20})")) {
+                return true;
+            } else {
+                passwordView.setError("required: 8-20 characters with upper and lowecase letters and atleast one number.");
+                return false;
+            }
+        }
+        return false;
     }
 
 }

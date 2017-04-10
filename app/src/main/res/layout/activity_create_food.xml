@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Enter food title"
+        android:maxLength="40"
         />
 
     <EditText
@@ -19,6 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Enter food description"
+        android:maxLength="200"
         />
 
     <EditText
@@ -27,6 +29,7 @@
         android:layout_height="wrap_content"
         android:hint="Enter serving size (in grams)"
         android:inputType="number"
+        android:maxLength="5"
         />
 
 
@@ -36,6 +39,7 @@
         android:layout_height="wrap_content"
         android:hint="Enter fat per serving"
         android:inputType="number"
+        android:maxLength="4"
         />
 
 
@@ -45,6 +49,7 @@
         android:layout_height="wrap_content"
         android:hint="Enter protein per serving"
         android:inputType="number"
+        android:maxLength="4"
         />
 
 
@@ -54,6 +59,7 @@
         android:layout_height="wrap_content"
         android:hint="Enter carbs per serving"
         android:inputType="number"
+        android:maxLength="4"
         />
 
 

@@ -58,8 +58,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void goToLogin(MenuItem item) {
+        SessionManager manager = SessionManager.getInstance(this);
+        manager.logoutUser();
         Intent signIn = new Intent(this, LoginActivity.class);
+        signIn.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(signIn);
+        finish();
     }
 
 

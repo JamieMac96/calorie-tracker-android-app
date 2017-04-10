@@ -55,6 +55,7 @@
                     android:paddingLeft="@dimen/hint_spacing"
                     android:inputType="textEmailAddress"
                     android:maxLines="1"
+                    android:maxLength="200"
                     android:background="@drawable/input_background"
                     android:textCursorDrawable="@null"
                     />
@@ -80,6 +81,7 @@
                     android:imeActionId="@+id/login"
                     android:inputType="textPassword"
                     android:maxLines="1"
+                    android:maxLength="200"
                     android:textCursorDrawable="@null"
                     />
 
@@ -102,6 +104,7 @@
                     android:paddingLeft="@dimen/hint_spacing"
                     android:background="@drawable/input_background"
                     android:hint="@string/prompt_password_confirm"
+                    android:maxLength="200"
                     android:imeActionId="@+id/login"
                     android:inputType="textPassword"
                     android:maxLines="1"

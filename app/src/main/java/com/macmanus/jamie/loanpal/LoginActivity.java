@@ -40,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
     private TextView forgottenPassword;
-    private final String REQUEST_DESTINATION = "http://34.251.31.162/login.php";
+    private final String REQUEST_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/login.php";
 
 
     @Override
@@ -60,8 +60,16 @@ public class LoginActivity extends AppCompatActivity {
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
 
 
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         SessionManager manager = SessionManager.getInstance(getApplicationContext());
-        manager.logoutUser();
+        if(manager.isLoggedIn()){
+            goToMainActivity();
+        }
     }
 
     public void attemptLogin(View view){
