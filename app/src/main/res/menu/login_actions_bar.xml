@@ -1,0 +1,15 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- "Mark Favorite", should appear as action button if possible -->
+    <item
+        android:id="@+id/action_favorite"
+        android:icon="@drawable/ic_more_vert_white_48dp"
+        android:title="forgotten password"
+        tools:context="com.macmanus.jamie.loanpal.LoginActivity"
+        app:showAsAction="always"
+        />
+
+    <!-- Settings, should always be in the overflow -->
+</menu>

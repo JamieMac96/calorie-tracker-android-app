@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+
+        <item android:id="@+id/goals_item"
+            android:icon="@drawable/ic_add_white_24dp"
+            android:title="Goals"
+            android:onClick="goToGoals">
+
+        </item>
+
+        <item android:id="@+id/progress_item"
+            android:icon="@drawable/ic_add_white_24dp"
+            android:title="Progress"
+            android:onClick="goToProgress">
+
+        </item>
+
+        <item android:id="@+id/add_food_item"
+            android:icon="@drawable/ic_add_white_24dp"
+            android:title="Add Food"
+            android:onClick="goToAddFood"
+            >
+
+        </item>
+
+        <item android:id="@+id/create_food_item"
+            android:icon="@drawable/ic_add_white_24dp"
+            android:title="Create New Food"
+            android:onClick="goToCreateFood">
+
+        </item>
+
+        <item android:id="@+id/home_item"
+            android:icon="@drawable/ic_add_white_24dp"
+            android:title="Logout"
+            android:onClick="goToLogin">
+
+        </item>
+    </group>
+</menu>

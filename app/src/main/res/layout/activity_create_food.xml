@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/create_food_layout">
+
+    <include
+        layout="@layout/secondary_toolbar" />
+
+    <EditText
+        android:id="@+id/food_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter food title"
+        />
+
+    <EditText
+        android:id="@+id/food_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter food description"
+        />
+
+    <EditText
+        android:id="@+id/serving_size"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter serving size (in grams)"
+        android:inputType="number"
+        />
+
+
+    <EditText
+        android:id="@+id/fat_per_serving"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter fat per serving"
+        android:inputType="number"
+        />
+
+
+    <EditText
+        android:id="@+id/protein_per_serving"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter protein per serving"
+        android:inputType="number"
+        />
+
+
+    <EditText
+        android:id="@+id/carbs_per_serving"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter carbs per serving"
+        android:inputType="number"
+        />
+
+
+    <Button
+        android:id="@+id/submit_food"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="submit"
+        android:onClick="submitFood"/>
+
+
+
+</LinearLayout>

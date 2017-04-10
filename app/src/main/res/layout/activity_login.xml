@@ -1,0 +1,135 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    tools:context="com.macmanus.jamie.loanpal.LoginActivity"
+    android:background="@color/bodyColor">
+
+    <!-- Login progress -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:background="@color/headerColor"
+        android:text="@string/sign_in"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:textSize="30sp"
+        android:fontFamily="serif"
+        />
+
+
+    <ProgressBar
+        android:id="@+id/login_progress"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:visibility="gone" />
+
+
+    <ScrollView
+        android:id="@+id/login_form"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/email_login_form"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:layout_weight="1"
+                android:layout_marginTop="45dp">
+
+                <AutoCompleteTextView
+                    android:id="@+id/email"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:hint="@string/prompt_email"
+                    android:paddingStart="@dimen/hint_spacing"
+                    android:paddingLeft="@dimen/hint_spacing"
+                    android:inputType="textEmailAddress"
+                    android:maxLines="1"
+                    android:background="@drawable/input_background"
+                    android:textCursorDrawable="@null"
+                    />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingRight="20dp"
+                android:paddingLeft="20dp"
+                android:layout_weight="1"
+                android:layout_marginTop="45dp">
+
+                <EditText
+                    android:id="@+id/password"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:paddingStart="@dimen/hint_spacing"
+                    android:paddingLeft="@dimen/hint_spacing"
+                    android:background="@drawable/input_background"
+                    android:hint="@string/prompt_password"
+                    android:inputType="textPassword"
+                    android:maxLines="1"
+                    android:textCursorDrawable="@null"
+                    />
+
+            </android.support.design.widget.TextInputLayout>
+
+
+            <Button
+                android:id="@+id/email_sign_in_button"
+                style="?android:textAppearanceSmall"
+                android:background="@drawable/button_background"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="56dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:textSize="20sp"
+                android:text="LOGIN"
+                android:fontFamily="serif"
+                android:layout_weight="1"
+                android:onClick="attemptLogin"
+                />
+
+            <Button
+                android:id="@+id/email_sign_up_button"
+                style="?android:textAppearanceSmall"
+                android:background="@drawable/button_background"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="56dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:textSize="20sp"
+                android:text="@string/sign_up"
+                android:fontFamily="serif"
+                android:layout_weight="1"
+                android:onClick="startSignUpActivity"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:paddingLeft="20dp"
+                android:layout_marginTop="10dp"
+                android:clickable="true"
+                android:id="@+id/forgotten_password"
+                android:onClick="startPasswordRetrieval"/>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

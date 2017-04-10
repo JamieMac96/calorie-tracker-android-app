@@ -1,0 +1,131 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    tools:context="com.macmanus.jamie.loanpal.LoginActivity"
+    android:background="@color/bodyColor">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:background="@color/headerColor"
+        android:text="@string/sign_up2"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:textSize="30sp"
+        android:fontFamily="serif"
+        />
+
+    <!-- Login progress -->
+    <ProgressBar
+        android:id="@+id/login_progress"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:visibility="gone" />
+
+
+    <ScrollView
+        android:id="@+id/login_form"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/email_login_form"
+            android:layout_width="match_parent"
+            android:layout_height="500dp"
+            android:orientation="vertical">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:layout_weight="1"
+                android:layout_marginTop="20dp">
+
+                <AutoCompleteTextView
+                    android:id="@+id/emailSignUp"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:hint="@string/prompt_email"
+                    android:paddingLeft="@dimen/hint_spacing"
+                    android:inputType="textEmailAddress"
+                    android:maxLines="1"
+                    android:background="@drawable/input_background"
+                    android:textCursorDrawable="@null"
+                    />
+
+            </android.support.design.widget.TextInputLayout>
+
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingRight="20dp"
+                android:paddingLeft="20dp"
+                android:layout_weight="1"
+                android:layout_marginTop="20dp">
+
+                <EditText
+                    android:id="@+id/passwordSignUp"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:paddingLeft="@dimen/hint_spacing"
+                    android:background="@drawable/input_background"
+                    android:hint="@string/prompt_password"
+                    android:imeActionId="@+id/login"
+                    android:inputType="textPassword"
+                    android:maxLines="1"
+                    android:textCursorDrawable="@null"
+                    />
+
+            </android.support.design.widget.TextInputLayout>
+
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingRight="20dp"
+                android:paddingLeft="20dp"
+                android:layout_weight="1"
+                android:layout_marginTop="20dp">
+
+                <EditText
+                    android:id="@+id/passwordConfirmSignUp"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:paddingStart="@dimen/hint_spacing"
+                    android:paddingLeft="@dimen/hint_spacing"
+                    android:background="@drawable/input_background"
+                    android:hint="@string/prompt_password_confirm"
+                    android:imeActionId="@+id/login"
+                    android:inputType="textPassword"
+                    android:maxLines="1"
+                    android:textCursorDrawable="@null"
+                    />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <Button
+                android:id="@+id/sign_up_button"
+                style="?android:textAppearanceSmall"
+                android:background="@drawable/button_background"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="31dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:textSize="20sp"
+                android:text="@string/sign_up2"
+                android:fontFamily="serif"
+                android:layout_weight="1"
+                android:onClick="registerUser"
+                />
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

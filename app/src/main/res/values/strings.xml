@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">Calorie Tracker</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="prompt_password_confirm">Confirm password</string>
+    <string name="sign_up"><![CDATA[sign up >]]></string>
+    <string name="sign_in">SIGN IN</string>
+    <string name="sign_up2">SIGN UP</string>
+    <string name="retrieval_prompt">We will send you an email with your new password.</string>
+    <string name="submit">SUBMIT</string>
+    <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
+</resources>
