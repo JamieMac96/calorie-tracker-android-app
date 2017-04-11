@@ -1,10 +1,15 @@
 package com.macmanus.jamie.loanpal;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,6 +27,17 @@ public class SearchResultsActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_results);
+
+        Button backButton = (Button) findViewById(R.id.toolbar_back_button);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        TextView toolbarTitle = (TextView) findViewById(R.id.toolbar_title);
+        toolbarTitle.setText("Search Results");
 
 
         String jsonSearchResults = getIntent().getExtras().getString("jsonSearchResults");
@@ -42,11 +58,29 @@ public class SearchResultsActivity extends AppCompatActivity {
             }
 
 
+
             ListView foodList = (ListView) findViewById(R.id.search_item_list);
 
-            SearchItemAdapter fAdapter = new SearchItemAdapter(this,R.layout.search_result_item, R.id.search_result_item, items);
+            foodList.setEmptyView(findViewById(R.id.empty));
+
+            SearchItemAdapter fAdapter = new SearchItemAdapter(this, R.layout.search_result_item, R.id.search_result_item, items);
 
             foodList.setAdapter(fAdapter);
+
+            foodList.setClickable(true);
+            final ArrayList<FoodItem> finalItems = items;
+
+            foodList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Intent openFoodItem = new Intent(SearchResultsActivity.this, FoodItemActivity.class);
+                    String stringifiedFoodItem = finalItems.get(position).toString();
+                    openFoodItem.putExtra("foodItem", stringifiedFoodItem);
+                    openFoodItem.putExtra("calledFrom", "searchResults");
+                    startActivity(openFoodItem);
+                }
+            });
+
         }
         catch (JSONException e){
 

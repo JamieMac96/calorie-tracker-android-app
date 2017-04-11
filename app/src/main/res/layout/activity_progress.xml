@@ -19,5 +19,15 @@
             android:layout_height="wrap_content"
             android:id="@+id/progress_list"/>
 
+    <TextView
+        android:id="@+id/empty"
+        android:text="No Results Found."
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:visibility="gone"
+        style="@android:style/TextAppearance.Large"
+        android:gravity="center">
+    </TextView>
+
 
 </LinearLayout>

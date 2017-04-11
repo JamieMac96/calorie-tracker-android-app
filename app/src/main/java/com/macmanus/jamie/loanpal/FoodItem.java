@@ -100,4 +100,8 @@ public class FoodItem {
     public void setCarbsPerServing(double carbsPerServing) {
         this.carbsPerServing = carbsPerServing;
     }
+
+    public String toString(){
+        return id + "," + title + "," + description + "," + servingSize + "," + numServings + "," + fatPerServing + "," + proteinPerServing + "," + carbsPerServing;
+    }
 }

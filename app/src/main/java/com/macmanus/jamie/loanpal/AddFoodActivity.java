@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.RequestFuture;
@@ -140,10 +141,15 @@ public class AddFoodActivity extends Activity {
 
 
     public void sendToSearchResultActivity(String items){
-        Intent searchResults = new Intent(this, SearchResultsActivity.class);
-        searchResults.putExtra("jsonSearchResults", items);
-        searchResults.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(searchResults);
+        if(items.equals("[]")){
+            Toast.makeText(this, "No search results found", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            Intent searchResults = new Intent(this, SearchResultsActivity.class);
+            searchResults.putExtra("jsonSearchResults", items);
+            searchResults.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(searchResults);
+        }
     }
 
 
