@@ -1,6 +1,9 @@
 package com.macmanus.jamie.loanpal;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Paint;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -28,6 +31,11 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.macmanus.jamie.loanpal.DataRetrieverService.DAILY_FOODS_MESSAGE;
+import static com.macmanus.jamie.loanpal.DataRetrieverService.PROGRESS_ENTRIES_MESSAGE;
+import static com.macmanus.jamie.loanpal.DataRetrieverService.USER_DETAILS_MESSAGE;
+import static com.macmanus.jamie.loanpal.DataRetrieverService.USER_FOODS_MESSAGE;
 
 /**
  * A login screen that offers login via email/password.
@@ -60,12 +68,17 @@ public class LoginActivity extends AppCompatActivity {
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
 
 
-
+        MyResponseReceiver receiver;
+        IntentFilter filter = new IntentFilter(MyResponseReceiver.ACTION_RESP);
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        receiver = new MyResponseReceiver();
+        registerReceiver(receiver, filter);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        MyResponseReceiver receiver = new MyResponseReceiver();
         SessionManager manager = SessionManager.getInstance(getApplicationContext());
         if(manager.isLoggedIn()){
             goToMainActivity();
@@ -104,7 +117,7 @@ public class LoginActivity extends AppCompatActivity {
                         Toast.makeText(LoginActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
                         SessionManager manager = SessionManager.getInstance(getApplicationContext());
                         manager.createLoginSession(userID, email);
-                        goToMainActivity();
+                        retrieveUserData(userID);
                     }
                     else{
                         Toast.makeText(LoginActivity.this, "Email or password incorrect", Toast.LENGTH_SHORT).show();
@@ -169,6 +182,81 @@ public class LoginActivity extends AppCompatActivity {
     public void startSignUpActivity(View view) {
         Intent signUpActivity = new Intent(this, SignUpActivity.class);
         startActivity(signUpActivity);
+    }
+
+    public void retrieveUserData(String userID){
+
+        String getUserDetailsMessage = "uDetails";
+        String getProgressEntriesMessage = "pEntries";
+        String getUserFoodsMessage = "uFoods";
+        String getDailyFoodsMessage = "dFoods";
+
+        Intent detailsIntent = new Intent(this, DataRetrieverService.class);
+        detailsIntent.putExtra(DataRetrieverService.PARAM_IN_MSG, getUserDetailsMessage);
+        detailsIntent.putExtra(DataRetrieverService.USER_ID_MSG, userID);
+        startService(detailsIntent);
+
+        Intent progressIntent = new Intent(this, DataRetrieverService.class);
+        progressIntent.putExtra(DataRetrieverService.PARAM_IN_MSG, getProgressEntriesMessage);
+        String userID1 = userID;
+        Log.e("USERID IN SENDER1",userID + "");
+        progressIntent.putExtra(DataRetrieverService.USER_ID_MSG, userID1);
+        startService(progressIntent);
+
+        Intent uFoodsIntent = new Intent(this, DataRetrieverService.class);
+        uFoodsIntent.putExtra(DataRetrieverService.PARAM_IN_MSG, getUserFoodsMessage);
+        String userID2 = userID1;
+        Log.e("USERID IN SENDER2",userID + "");
+        uFoodsIntent.putExtra(DataRetrieverService.USER_ID_MSG, userID2);
+        startService(uFoodsIntent);
+
+        Intent dFoodsIntent = new Intent(this, DataRetrieverService.class);
+        dFoodsIntent.putExtra(DataRetrieverService.PARAM_IN_MSG, getDailyFoodsMessage);
+        String userID3 = userID2;
+        Log.e("USERID IN SENDER3",userID + "");
+        dFoodsIntent.putExtra(DataRetrieverService.USER_ID_MSG, userID3);
+        startService(dFoodsIntent);
+
+
+    }
+
+    public class MyResponseReceiver extends BroadcastReceiver {
+        // Called when the BroadcastReceiver gets an Intent it's registered to receive
+        public static final String ACTION_RESP =
+                "com.mamlambo.intent.action.MESSAGE_PROCESSED";
+        private boolean retrievedUserDetails = false;
+        private boolean retrievedProgressEntries = false;
+        private boolean retrievedUserFoods = false;
+        private boolean retrievedDailyFoods = false;
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String text = intent.getStringExtra(DataRetrieverService.PARAM_OUT_MSG);
+
+            Log.e("IN RECEIVER", "IN RECEIVER");
+
+            switch (text) {
+                case USER_DETAILS_MESSAGE:
+                    retrievedUserDetails = true;
+                    break;
+                case PROGRESS_ENTRIES_MESSAGE:
+                    retrievedProgressEntries = true;
+                    break;
+                case USER_FOODS_MESSAGE:
+                    retrievedUserFoods = true;
+                    break;
+                case DAILY_FOODS_MESSAGE:
+                    retrievedDailyFoods = true;
+                    break;
+            }
+            if(retrievedUserDetails && retrievedProgressEntries && retrievedUserFoods && retrievedDailyFoods){
+                retrievedUserDetails = false;
+                retrievedDailyFoods = false;
+                retrievedUserFoods = false;
+                retrievedProgressEntries = false;
+                goToMainActivity();
+            }
+        }
     }
 
 

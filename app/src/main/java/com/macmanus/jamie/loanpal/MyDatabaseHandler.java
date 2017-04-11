@@ -31,50 +31,51 @@ public class MyDatabaseHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase myDB){
         myDB.execSQL("CREATE TABLE User ("                                  +
-                "UserID INT NOT NULL PRIMARY KEY AUTOINCREMENT,"            +
+                "UserID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"            +
                 "EmailAddress VARCHAR(255) UNIQUE,"                         +
                 "Password VARCHAR(45));");
 
         myDB.execSQL("  CREATE TABLE BodyweightEntry("                      +
-                    "   EntryID INT NOT NULL PRIMARY KEY AUTOINCREMENT,"    +
-                    "   User_UserID INT NOT NULL FOREIGN KEY,"              +
+                    "   EntryID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"    +
+                    "   User_UserID INTEGER NOT NULL,"              +
                     "   Weight double NOT NULL,"                            +
                     "   WeighInDate NOT NULL,"                              +
-                    "   FOREIGN KEY User_UserID REFERENCES User(UserID));");
+                    "   FOREIGN KEY(User_UserID) REFERENCES User(UserID));");
 
         myDB.execSQL("  CREATE TABLE DailyFood( "                           +
-                "       FoodID INT NOT NULL PRIMARY KEY AUTOINCREMENT,"     +
-                "       User_UserID INT NOT NULL, "                         +
+                "       FoodID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"     +
+                "       User_UserID INTEGER NOT NULL, "                         +
                 "       Name VARCHAR(45) NOT NULL,"                         +
                 "       ServingSize double NOT NULL,"                       +
+                "       NumServings double NOT NULL,"                       +
                 "       CaloriesPerServing double NOT NULL,"                +
                 "       ProteinPerServing double NOT NULL,"                 +
                 "       FatPerServing double NOT NULL,"                     +
                 "       CarbsPerServing double NOT NULL,"                   +
-                "       FOREIGN KEY User_UserID REFERNCES User(UserID));"
+                "       FOREIGN KEY(User_UserID) REFERENCES User(UserID));"
         );
 
         myDB.execSQL("  CREATE TABLE UserDetails("                          +
-                "       User_UsrID INT NOT NULL PRIMARY KEY AUTOINCREMENT," +
+                "       User_UserID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                 "       WeeklyGoal VARCHAR(45) NOT NULL,"                   +
                 "       InitialBodyweight double NOT NULL, "                +
                 "       Bodyweight double NOT NULL,"                        +
-                "       CalorieGoal INT NOT NULL,"                          +
-                "       ProteinGoalPercent INT NOT NULL,"                   +
-                "       CarbGoalPercent INT NOT NULL,"                      +
-                "       FatGoalPercent INT NOT NULL,"                       +
-                "       FOREIGN KEY User_UserID REFERENCES User(UserID)); ");
+                "       CalorieGoal INTEGER NOT NULL,"                          +
+                "       ProteinGoalPercent INTEGER NOT NULL,"                   +
+                "       CarbGoalPercent INTEGER NOT NULL,"                      +
+                "       FatGoalPercent INTEGER NOT NULL,"                       +
+                "       FOREIGN KEY(User_UserID) REFERENCES User(UserID)); ");
 
         myDB.execSQL("  CREATE TABLE UserFood( "                            +
-                "       FoodID INT NOT NULL PRIMARY KEY AUTOINCREMENT,"     +
-                "       User_UserID INT NOT NULL, "                         +
+                "       FoodID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"     +
+                "       User_UserID INTEGER NOT NULL, "                         +
                 "       Name VARCHAR(45) NOT NULL,"                         +
                 "       ServingSize double NOT NULL,"                       +
                 "       CaloriesPerServing double NOT NULL,"                +
                 "       ProteinPerServing double NOT NULL,"                 +
                 "       FatPerServing double NOT NULL,"                     +
                 "       CarbsPerServing double NOT NULL,"                   +
-                "       FOREIGN KEY User_UserID REFERNCES User(UserID));"
+                "       FOREIGN KEY(User_UserID) REFERENCES User(UserID));"
         );
 
     }

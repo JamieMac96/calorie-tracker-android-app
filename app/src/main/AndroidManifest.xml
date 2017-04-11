@@ -39,6 +39,12 @@
             android:theme="@style/AppTheme"/>
         <activity android:name=".ProgressActivity"
             android:theme="@style/AppTheme"/>
+        <activity android:name=".SearchResultsActivity"
+            android:theme="@style/AppTheme"/>
+        <service
+            android:name=".DataRetrieverService"
+            android:enabled="true" >
+        </service>
 
 
         <!-- ATTENTION: This was auto-generated to add Google Play services to your project for
