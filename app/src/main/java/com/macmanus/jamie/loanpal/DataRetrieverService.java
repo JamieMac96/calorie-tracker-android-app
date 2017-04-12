@@ -3,6 +3,28 @@ package com.macmanus.jamie.loanpal;
 import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
+import android.widget.Toast;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkError;
+import com.android.volley.NoConnectionError;
+import com.android.volley.ParseError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by jamie on 11/04/17.
@@ -19,10 +41,10 @@ public class DataRetrieverService extends IntentService {
     public static final String USER_FOODS_MESSAGE= "uFoods";
     public static final String DAILY_FOODS_MESSAGE = "dFoods";
 
-    private final String USER_DETAILS_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/getGoals.php";
-    private final String PROGRESS_ENTRIES_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/getProgress.php";
-    private final String USER_FOODS_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/getGoals.php";
-    private final String DAILY_FOODS_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/getGoals.php";
+    private final String USER_DETAILS_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/get-goals.php";
+    private final String PROGRESS_ENTRIES_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/get-progress.php";
+    private final String USER_FOODS_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/get-user-foods.php";
+    private final String DAILY_FOODS_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/get-daily-foods.php";
 
 
 
@@ -69,51 +91,248 @@ public class DataRetrieverService extends IntentService {
 
     }
 
-    public void retrieveUserDetails(int userID){
-        //TODO: write implementation for data retrieval when we have implemented ability to search for and add foods.
+    public void retrieveUserDetails(final int userID){
 
+        Map<String,String> params = new HashMap<String,String>();
+        params.put("userID", userID + "");
 
-        Log.e("DataRetrieverService","retrieveUserDetails");
-        Intent broadcastIntent = new Intent();
-        broadcastIntent.setAction(LoginActivity.MyResponseReceiver.ACTION_RESP);
-        broadcastIntent.addCategory(Intent.CATEGORY_DEFAULT);
-        broadcastIntent.putExtra(PARAM_OUT_MSG, USER_DETAILS_MESSAGE);
-        sendBroadcast(broadcastIntent);
+        Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    boolean requestOutcome = response.getBoolean("success");
+                    Log.e(requestOutcome + " u details outcome", "outcome here");
+
+                    if(requestOutcome){
+                        String userIDFromDB = response.getString("userID");
+                        String weeklyGoal = response.getString("weeklyGoal");
+                        String activityLevel = response.getString("activityLevel");
+                        String initialBodyweight = response.getString("initialBodyweight");
+                        String bodyweight = response.getString("bodyweight");
+                        String goalBodyweight = response.getString("goalBodyWeight");
+                        String calorieGoal = response.getString("calorieGoal");
+                        String fatPercentage = response.getString("fatPercentage");
+                        String proteinPercentage = response.getString("proteinPercentage");
+                        String carbPercentage = response.getString("carbPercentage");
+
+                        MyDatabaseHandler dbHandler = MyDatabaseHandler.getInstance(getApplicationContext());
+
+                        if(! (userID == Integer.parseInt(userIDFromDB))){
+                            Log.e("ERROR ERROR !!!!!", "UserIDs do not match");
+                        }
+
+                        dbHandler.getWritableDatabase().execSQL(
+                        "INSERT INTO UserDetails(User_UserID, WeeklyGoal, ActivityLevel, InitialBodyweight, Bodyweight, " +
+                                "GoalWeight, CalorieGoal, ProteinGoalPercent, CarbGoalPercent, FatGoalPercent)" +
+                                "VALUES(" + userID + ",\"" +weeklyGoal + "\", \""+ activityLevel +"\", "+initialBodyweight +
+                                ","+bodyweight+", "+goalBodyweight+", "+calorieGoal+", "+proteinPercentage+", "+carbPercentage+", "+fatPercentage+");");
+
+                        sendBroadCast(USER_DETAILS_MESSAGE);
+                    }
+                    else{
+
+                    }
+
+                } catch (JSONException e) {
+                    Log.e("in onResponse catch","in catch");
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        Response.ErrorListener errorListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+               error.printStackTrace();
+            }
+        };
+
+        CustomRequest request = new CustomRequest(Request.Method.POST, USER_DETAILS_DESTINATION, params, listener, errorListener);
+
+        RequestQueueHelper helper = RequestQueueHelper.getInstance();
+        helper.add(request);
     }
 
-    public void retrieveProgressEntries(int userID){
+    public void retrieveProgressEntries(final int userID){
         //TODO: write implementation for data retrieval when we have implemented ability to search for and add foods.
 
-        Log.e("DataRetrieverService","retrieveProgressEntries");
 
-        Intent broadcastIntent = new Intent();
-        broadcastIntent.setAction(LoginActivity.MyResponseReceiver.ACTION_RESP);
-        broadcastIntent.addCategory(Intent.CATEGORY_DEFAULT);
-        broadcastIntent.putExtra(PARAM_OUT_MSG, PROGRESS_ENTRIES_MESSAGE);
-        sendBroadcast(broadcastIntent);
+        Map<String,String> params = new HashMap<String,String>();
+        params.put("userID", userID + "");
+
+        Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                boolean requestOutcome = false;
+                try {
+                    requestOutcome = response.getBoolean("success");
+                    Log.e(requestOutcome + " progress outcome", "outcome here");
+                    if (requestOutcome) {
+                        MyDatabaseHandler dbHandler = MyDatabaseHandler.getInstance(getApplicationContext());
+
+                        JSONArray result = response.getJSONArray("result");
+                        for (int i = 0; i < result.length(); i++) {
+                            JSONArray innerArray = result.getJSONArray(i);
+                            String bodyweight = innerArray.getString(1);
+                            String date = innerArray.getString(0);
+
+                            Date initDate = new SimpleDateFormat("dd/MM/yyyy").parse(date);
+                            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                            String parsedDate = formatter.format(initDate);
+
+
+                            dbHandler.getWritableDatabase().execSQL(
+                                    "INSERT INTO BodyweightEntry(EntryID, User_UserID, Weight, WeighInDate)" +
+                                            "VALUES(" + null + "," +userID + ", "+bodyweight  + ", \""+ parsedDate +"\");");
+
+
+                        }
+                        sendBroadCast(PROGRESS_ENTRIES_MESSAGE);
+                    } else {
+                        Log.e("response false", "false");
+                    }
+                }
+                 catch (JSONException e) {
+                    Log.e("in onResponse catch","in catch");
+                    e.printStackTrace();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        Response.ErrorListener errorListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        };
+
+        CustomRequest request = new CustomRequest(Request.Method.POST, PROGRESS_ENTRIES_DESTINATION, params, listener, errorListener);
+
+        RequestQueueHelper helper = RequestQueueHelper.getInstance();
+        helper.add(request);
+
     }
 
-    public void retrieveUserFoods(int userID){
+    public void retrieveUserFoods(final int userID){
         //TODO: write implementation for data retrieval when we have implemented ability to search for and add foods.
 
-        Log.e("DataRetrieverService","retrieveUserFoods");
+        Map<String,String> params = new HashMap<String,String>();
+        params.put("userID", userID + "");
 
-        Intent broadcastIntent = new Intent();
-        broadcastIntent.setAction(LoginActivity.MyResponseReceiver.ACTION_RESP);
-        broadcastIntent.addCategory(Intent.CATEGORY_DEFAULT);
-        broadcastIntent.putExtra(PARAM_OUT_MSG, USER_FOODS_MESSAGE);
-        sendBroadcast(broadcastIntent);
+        Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    boolean requestOutcome = response.getBoolean("success");
+                    Log.e(requestOutcome + " user food outcome", "outcome here");
+
+                    if(requestOutcome){
+                        MyDatabaseHandler dbHandler = MyDatabaseHandler.getInstance(getApplicationContext());
+                        //TODO: add returned data to local database.
+
+                        JSONArray result = response.getJSONArray("result");
+                        for (int i = 0; i < result.length(); i++) {
+                            JSONArray innerArray = result.getJSONArray(i);
+                            String name = innerArray.getString(0);
+                            String description = innerArray.getString(1);
+                            String servingSize = innerArray.getString(2);
+                            String fatPerServing = innerArray.getString(3);
+                            String proteinPerServing = innerArray.getString(4);
+                            String carbPerServing = innerArray.getString(5);
+
+
+                            int calsPerServing = (int) ((Double.parseDouble(fatPerServing) * 9) + (Double.parseDouble(carbPerServing) * 4) + (Double.parseDouble(proteinPerServing) * 4));//calculate
+
+
+                            dbHandler.getWritableDatabase().execSQL(
+                                    "INSERT INTO UserFood(FoodID, User_UserID, Name, Description, ServingSize, CaloriesPerServing, ProteinPerServing, FatPerServing, CarbsPerServing)" +
+                                            "VALUES(" + null + "," +userID + ", \""+name + "\", \""+ description +"\", "+servingSize+", "+calsPerServing+", " +
+                                            proteinPerServing+", "+fatPerServing+", "+carbPerServing+");");
+
+                            List<String> databaseString = dbHandler.getTableInfoAsString("UserFood");
+
+                            for(int k = 0; k < databaseString.size(); k++){
+                                Log.e("row", databaseString.get(i));
+                            }
+                        }
+
+                        Log.e(response.getString("result"),"<--------DATA BACK USER FDS");
+
+                        sendBroadCast(USER_FOODS_MESSAGE);
+                    }
+                    else{
+
+                    }
+
+                } catch (JSONException e) {
+                    Log.e("in onResponse catch","in catch");
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        Response.ErrorListener errorListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        };
+
+        CustomRequest request = new CustomRequest(Request.Method.POST, USER_FOODS_DESTINATION, params, listener, errorListener);
+
+        RequestQueueHelper helper = RequestQueueHelper.getInstance();
+        helper.add(request);
     }
 
     public void retrieveDailyFoods(int userID){
-        //TODO: write implementation for data retrieval when we have implemented ability to search for and add foods.
 
-        Log.e("DataRetrieverService","retrieveDailyFoods");
+        Map<String,String> params = new HashMap<String,String>();
+        params.put("userID", userID + "");
 
+        Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    boolean requestOutcome = response.getBoolean("success");
+                    Log.e(requestOutcome + "daily food outcome", "outcome here");
+
+                    if(requestOutcome){
+                        Log.e(response.getString("result"),"<--------DATA BACK");
+                        //TODO: add returned data to local database.
+                        sendBroadCast(DAILY_FOODS_MESSAGE);
+                    }
+                    else{
+
+                    }
+
+                } catch (JSONException e) {
+                    Log.e("in onResponse catch","in catch");
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        Response.ErrorListener errorListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        };
+
+        CustomRequest request = new CustomRequest(Request.Method.POST, DAILY_FOODS_DESTINATION, params, listener, errorListener);
+
+        RequestQueueHelper helper = RequestQueueHelper.getInstance();
+        helper.add(request);
+    }
+
+    private void sendBroadCast(String message){
+        Log.e("DataRetrieverService",message);
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction(LoginActivity.MyResponseReceiver.ACTION_RESP);
         broadcastIntent.addCategory(Intent.CATEGORY_DEFAULT);
-        broadcastIntent.putExtra(PARAM_OUT_MSG, DAILY_FOODS_MESSAGE);
+        broadcastIntent.putExtra(PARAM_OUT_MSG, message);
         sendBroadcast(broadcastIntent);
     }
 }

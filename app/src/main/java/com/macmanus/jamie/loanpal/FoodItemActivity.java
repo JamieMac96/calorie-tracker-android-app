@@ -1,17 +1,34 @@
 package com.macmanus.jamie.loanpal;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkError;
+import com.android.volley.NoConnectionError;
+import com.android.volley.ParseError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.w3c.dom.Text;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by jamie on 11/04/17.
@@ -27,6 +44,8 @@ public class FoodItemActivity extends AppCompatActivity {
     private TextView servingSize;
     private TextView totalCals;
     private EditText numServings;
+
+    private final String ADD_FOOD_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/add-food.php";
 
 
     @Override
@@ -57,9 +76,24 @@ public class FoodItemActivity extends AppCompatActivity {
             try{
                 FoodItem fItem = initializeFoodItem(foodItemSplit);
                 setNumServingsMonitor(fItem);
+
+                if(context.equals("searchResults")){
+                    submitfoodButton.setText("Add Food");
+
+                    final FoodItem fItemCopy = fItem;
+
+                    submitfoodButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if(Double.parseDouble(numServings.getText().toString()) > 0){
+                                addDailyFood(fItemCopy);
+                            }
+                        }
+                    });
+                }
             }
             catch (NumberFormatException e){
-                Toast.makeText(this, "parse error", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Ivalid food", Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
             }
         }
@@ -67,10 +101,6 @@ public class FoodItemActivity extends AppCompatActivity {
             Toast.makeText(this, "Error: food item invalid", Toast.LENGTH_SHORT).show();
         }
 
-
-        if(context.equals("searchResults")){
-            submitfoodButton.setText("Add Food");
-        }
 
 
 
@@ -134,6 +164,7 @@ public class FoodItemActivity extends AppCompatActivity {
                     double totalFat = fItem.getFatPerServing() * servings;
                     double totalCarbs = fItem.getCarbsPerServing() * servings;
                     double totalProtein = fItem.getProteinPerServing() * servings;
+                    Log.e("Num servings ","" + fItem.getNumServings());
                     totalCals.setText(getCalories(totalFat, totalCarbs, totalProtein) + "");
                 }
             }
@@ -143,5 +174,70 @@ public class FoodItemActivity extends AppCompatActivity {
 
     public int getCalories(double fat, double carbs, double protein){
         return (int) ((fat * 9) + (carbs * 4) + (protein * 4));
+    }
+
+    private void addDailyFood(FoodItem fItem){
+        SessionManager manager = SessionManager.getInstance(this);
+        String userID = manager.getUserID();
+
+
+        double numServingsNumeric = Double.parseDouble(this.numServings.getText().toString());
+
+        Map<String,String> params = new HashMap<String,String>();
+        params.put("foodID", fItem.getId() + "");
+        params.put("numServings",  + numServingsNumeric + "");
+        params.put("userID", userID);
+
+
+        Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    boolean requestOutcome = response.getBoolean("success");
+                    Log.e(requestOutcome + " food outcome", "outcome here");
+
+                    if(requestOutcome){
+                        Toast.makeText(FoodItemActivity.this, "Food Added To Diary", Toast.LENGTH_SHORT);
+                        goToAddFoodActivity();
+                    }
+                    else{
+                        Toast.makeText(FoodItemActivity.this, "Email or password incorrect", Toast.LENGTH_SHORT).show();
+                    }
+
+                } catch (JSONException e) {
+                    Log.e("in onResponse catch","in catch");
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        Response.ErrorListener errorListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+                    Toast.makeText(FoodItemActivity.this, "no connection", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof AuthFailureError) {
+                    Toast.makeText(FoodItemActivity.this, "auth failure error", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof ServerError) {
+                    Toast.makeText(FoodItemActivity.this, "server error", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof NetworkError) {
+                    Toast.makeText(FoodItemActivity.this, "network error", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof ParseError) {
+                    Toast.makeText(FoodItemActivity.this, "parse error", Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
+
+        CustomRequest request = new CustomRequest(Request.Method.POST, ADD_FOOD_DESTINATION, params, listener, errorListener);
+
+        RequestQueueHelper helper = RequestQueueHelper.getInstance();
+        helper.add(request);
+    }
+
+    private void goToAddFoodActivity(){
+        Intent addFoodActivity = new Intent(this, AddFoodActivity.class);
+        addFoodActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        startActivity(addFoodActivity);
     }
 }

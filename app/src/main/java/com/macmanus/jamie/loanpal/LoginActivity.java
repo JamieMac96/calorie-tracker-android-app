@@ -49,6 +49,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mPasswordView;
     private TextView forgottenPassword;
     private final String REQUEST_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/login.php";
+    MyResponseReceiver receiver;
 
 
     @Override
@@ -68,7 +69,7 @@ public class LoginActivity extends AppCompatActivity {
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
 
 
-        MyResponseReceiver receiver;
+
         IntentFilter filter = new IntentFilter(MyResponseReceiver.ACTION_RESP);
         filter.addCategory(Intent.CATEGORY_DEFAULT);
         receiver = new MyResponseReceiver();
@@ -198,23 +199,20 @@ public class LoginActivity extends AppCompatActivity {
 
         Intent progressIntent = new Intent(this, DataRetrieverService.class);
         progressIntent.putExtra(DataRetrieverService.PARAM_IN_MSG, getProgressEntriesMessage);
-        String userID1 = userID;
         Log.e("USERID IN SENDER1",userID + "");
-        progressIntent.putExtra(DataRetrieverService.USER_ID_MSG, userID1);
+        progressIntent.putExtra(DataRetrieverService.USER_ID_MSG, userID);
         startService(progressIntent);
 
         Intent uFoodsIntent = new Intent(this, DataRetrieverService.class);
         uFoodsIntent.putExtra(DataRetrieverService.PARAM_IN_MSG, getUserFoodsMessage);
-        String userID2 = userID1;
         Log.e("USERID IN SENDER2",userID + "");
-        uFoodsIntent.putExtra(DataRetrieverService.USER_ID_MSG, userID2);
+        uFoodsIntent.putExtra(DataRetrieverService.USER_ID_MSG, userID);
         startService(uFoodsIntent);
 
         Intent dFoodsIntent = new Intent(this, DataRetrieverService.class);
         dFoodsIntent.putExtra(DataRetrieverService.PARAM_IN_MSG, getDailyFoodsMessage);
-        String userID3 = userID2;
         Log.e("USERID IN SENDER3",userID + "");
-        dFoodsIntent.putExtra(DataRetrieverService.USER_ID_MSG, userID3);
+        dFoodsIntent.putExtra(DataRetrieverService.USER_ID_MSG, userID);
         startService(dFoodsIntent);
 
 
@@ -261,6 +259,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
     private void goToMainActivity(){
+        unregisterReceiver(receiver);
         Intent mainActivity = new Intent(this, MainActivity.class);
         startActivity(mainActivity);
     }

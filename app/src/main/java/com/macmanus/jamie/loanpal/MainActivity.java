@@ -62,8 +62,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void goToLogin(MenuItem item) {
+        //close and delte database
+        MyDatabaseHandler.getInstance(getApplicationContext()).close();
+        getApplicationContext().deleteDatabase(MyDatabaseHandler.NAME);
+
+        //remove user session
         SessionManager manager = SessionManager.getInstance(this);
         manager.logoutUser();
+
+        //go to login and add flags to remove back button history
         Intent signIn = new Intent(this, LoginActivity.class);
         signIn.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(signIn);

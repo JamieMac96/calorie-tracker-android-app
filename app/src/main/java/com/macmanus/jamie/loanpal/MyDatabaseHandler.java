@@ -1,8 +1,13 @@
 package com.macmanus.jamie.loanpal;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by jamie on 04/03/17.
@@ -13,7 +18,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class MyDatabaseHandler extends SQLiteOpenHelper {
     private static final int DATABSE_VERSION = 1;
-    private static final String NAME = "local_calorie_helper.db";
+    public static final String NAME = "local_calorie_helper.db";
     private static MyDatabaseHandler myInstance;
 
 
@@ -30,52 +35,48 @@ public class MyDatabaseHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase myDB){
-        myDB.execSQL("CREATE TABLE User ("                                  +
-                "UserID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"            +
-                "EmailAddress VARCHAR(255) UNIQUE,"                         +
-                "Password VARCHAR(45));");
 
         myDB.execSQL("  CREATE TABLE BodyweightEntry("                      +
                     "   EntryID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"    +
                     "   User_UserID INTEGER NOT NULL,"              +
                     "   Weight double NOT NULL,"                            +
-                    "   WeighInDate NOT NULL,"                              +
-                    "   FOREIGN KEY(User_UserID) REFERENCES User(UserID));");
+                    "   WeighInDate NOT NULL);");
 
         myDB.execSQL("  CREATE TABLE DailyFood( "                           +
                 "       FoodID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"     +
                 "       User_UserID INTEGER NOT NULL, "                         +
                 "       Name VARCHAR(45) NOT NULL,"                         +
+                "       Description VARCHAR(200) NOT NULL,"                 +
                 "       ServingSize double NOT NULL,"                       +
                 "       NumServings double NOT NULL,"                       +
                 "       CaloriesPerServing double NOT NULL,"                +
                 "       ProteinPerServing double NOT NULL,"                 +
                 "       FatPerServing double NOT NULL,"                     +
-                "       CarbsPerServing double NOT NULL,"                   +
-                "       FOREIGN KEY(User_UserID) REFERENCES User(UserID));"
+                "       CarbsPerServing double NOT NULL);"
         );
 
         myDB.execSQL("  CREATE TABLE UserDetails("                          +
                 "       User_UserID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                 "       WeeklyGoal VARCHAR(45) NOT NULL,"                   +
+                "       ActivityLevel VARCHAR(45) NOT NULL,"                   +
                 "       InitialBodyweight double NOT NULL, "                +
                 "       Bodyweight double NOT NULL,"                        +
+                "       GoalWeight double NOT NULL,"                        +
                 "       CalorieGoal INTEGER NOT NULL,"                          +
                 "       ProteinGoalPercent INTEGER NOT NULL,"                   +
                 "       CarbGoalPercent INTEGER NOT NULL,"                      +
-                "       FatGoalPercent INTEGER NOT NULL,"                       +
-                "       FOREIGN KEY(User_UserID) REFERENCES User(UserID)); ");
+                "       FatGoalPercent INTEGER NOT NULL); ");
 
         myDB.execSQL("  CREATE TABLE UserFood( "                            +
                 "       FoodID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"     +
                 "       User_UserID INTEGER NOT NULL, "                         +
                 "       Name VARCHAR(45) NOT NULL,"                         +
+                "       Description VARCHAR(200) NOT NULL,"                 +
                 "       ServingSize double NOT NULL,"                       +
                 "       CaloriesPerServing double NOT NULL,"                +
                 "       ProteinPerServing double NOT NULL,"                 +
                 "       FatPerServing double NOT NULL,"                     +
-                "       CarbsPerServing double NOT NULL,"                   +
-                "       FOREIGN KEY(User_UserID) REFERENCES User(UserID));"
+                "       CarbsPerServing double NOT NULL);"
         );
 
     }
@@ -83,5 +84,49 @@ public class MyDatabaseHandler extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase myDB, int oldVersion, int newVersion){
         //
+    }
+
+
+    //returns the content of a table as an arraylist of rows.
+    //The rows are comma seperated values.
+    public List<String> getTableInfoAsString(String tableName){
+        Log.e("CALLED FUNCTION","");
+        List<String> tableData = new ArrayList<String>();
+
+
+        String selectQuery = "SELECT  * FROM " + tableName;
+        SQLiteDatabase db  = this.getReadableDatabase();
+        Cursor cursor      = db.rawQuery(selectQuery, null);
+        int counter = 0;
+
+        while (cursor.moveToNext()) {
+            if(counter == 0) {
+                tableData.add("");
+                for (int i = 0; i < cursor.getColumnCount(); i++) {
+                    int currentIndex = tableData.size() - 1;
+                    if (i != cursor.getColumnCount() - 1) {
+                        tableData.set(currentIndex, tableData.get(currentIndex) + cursor.getColumnName(i) + ",");
+                    } else {
+                        tableData.set(currentIndex, tableData.get(currentIndex) + cursor.getColumnName(i));
+                    }
+                }
+            }
+            tableData.add("");
+            for(int i = 0; i < cursor.getColumnCount(); i++){
+                int currentIndex = tableData.size() - 1;
+                if(i != cursor.getColumnCount() - 1) {
+                    tableData.set(currentIndex, tableData.get(currentIndex) + cursor.getString(i) + ",");
+                }
+                else{
+                    tableData.set(currentIndex, tableData.get(currentIndex) + cursor.getString(i));
+                }
+            }
+            counter++;
+        }
+
+
+        cursor.close();
+
+        return tableData;
     }
 }

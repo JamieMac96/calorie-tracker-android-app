@@ -107,16 +107,15 @@ public class GoalsActivity extends Activity {
                     Log.e("in try", "in try");
                     boolean requestOutcome = response.getBoolean("success");
                     if(requestOutcome){
-                        Log.e("WE MADE IT", "WE MADE IT");
                         String weeklyGoal = response.getString("weeklyGoal");
                         String activityLevel = response.getString("activityLevel");
                         String initialBodyweight = response.getString("initialBodyweight");
                         String bodyweight = response.getString("bodyweight");
                         String goalBodyweight = response.getString("goalBodyWeight");
                         String calorieGoal = response.getString("calorieGoal");
-                        String fatPercentage = response.getString("fatPercentage");
-                        String proteinPercentage = response.getString("proteinPercentage");
-                        String carbPercentage = response.getString("carbPercentage");
+                        String fatPercentage = response.getString("fatPercentage") + "%";
+                        String proteinPercentage = response.getString("proteinPercentage") + "%";
+                        String carbPercentage = response.getString("carbPercentage") + "%";
 
                         startingBodyweight.setText(initialBodyweight);
                         currentBodyWeight.setText(bodyweight);
