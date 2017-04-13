@@ -19,6 +19,7 @@
                 android:layout_height="match_parent"
                 android:text="Starting Bodyweight"
                 android:textSize="25dp"
+                android:textColor="@color/black"
                 />
 
             <TextView
@@ -26,14 +27,16 @@
                 android:layout_height="match_parent"
                 />
 
-            <EditText
+            <TextView
                 android:id="@+id/initial_bodyweight"
                 android:layout_width="60dp"
                 android:layout_height="match_parent"
                 android:layout_marginEnd="10dp"
                 android:layout_marginRight="10dp"
                 android:inputType="number"
-                android:text=""
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:text="none"
                 />
 
         </LinearLayout>
@@ -47,6 +50,7 @@
                 android:layout_height="match_parent"
                 android:text="Current Bodyweight"
                 android:textSize="25dp"
+                android:textColor="@color/black"
                 />
 
             <TextView
@@ -75,6 +79,7 @@
                 android:layout_height="match_parent"
                 android:text="Goal Bodyweight"
                 android:textSize="25dp"
+                android:textColor="@color/black"
                 />
 
             <TextView
@@ -104,6 +109,7 @@
                 android:layout_height="match_parent"
                 android:text="Weekly goal"
                 android:textSize="25dp"
+                android:textColor="@color/black"
 
                 />
             <Spinner
@@ -128,6 +134,7 @@
                 android:layout_height="match_parent"
                 android:text="Activity level"
                 android:textSize="25dp"
+                android:textColor="@color/black"
 
                 />
             <Spinner
@@ -151,6 +158,7 @@
                 android:layout_height="match_parent"
                 android:text="Calorie Goal"
                 android:textSize="25dp"
+                android:textColor="@color/black"
                 />
 
             <TextView
@@ -181,7 +189,8 @@
                 android:layout_height="wrap_content"
                 android:text="Macronutrient Goals: "
                 android:textSize="25dp"
-                android:id="@+id/macronutrient_goals"/>
+                android:id="@+id/macronutrient_goals"
+                android:textColor="@color/black"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -194,7 +203,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:text="Fat:"
-                    android:textSize="25dp"/>
+                    android:textSize="25dp"
+                    android:textColor="@color/black"/>
                 <TextView
                     android:layout_width="45dp"
                     android:layout_height="match_parent"
@@ -218,7 +228,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:text="Carbs:"
-                    android:textSize="25dp"/>
+                    android:textSize="25dp"
+                    android:textColor="@color/black"/>
 
                 <TextView
                     android:layout_width="15dp"
@@ -246,7 +257,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:text="Protein:"
-                    android:textSize="25dp"/>
+                    android:textSize="25dp"
+                    android:textColor="@color/black"/>
                 <Spinner
                     android:id="@+id/protein_dropdown"
                     android:layout_width="match_parent"

@@ -1,9 +1,16 @@
 package com.macmanus.jamie.loanpal;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,8 +31,12 @@ import com.android.volley.VolleyError;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import static com.macmanus.jamie.loanpal.DataRetrieverService.USER_DETAILS_MESSAGE;
 
 /**
  * Created by jamie on 04/03/17.
@@ -33,7 +44,7 @@ import java.util.Map;
 
 public class GoalsActivity extends Activity {
 
-    private EditText startingBodyweight;
+    private TextView startingBodyweight;
     private EditText currentBodyWeight;
     private EditText goalBodyWeight;
     private EditText calorieGoalEditText;
@@ -42,6 +53,16 @@ public class GoalsActivity extends Activity {
     private Spinner  proteinPercentage;
     private Spinner  weeklyGoalsDropdown;
     private Spinner  activityLevelDropDown;
+
+    private String loadedCurrentBodyWeight;
+    private String loadedGoalBodyWeight;
+    private String loadedCalorieGoalEditText;
+    private String  loadedFatPercentage;
+    private String  loadedCarbPercentage;
+    private String  loadedProteinPercentage;
+    private String  loadedWeeklyGoalsDropdown;
+    private String  loadedActivityLevelDropDown;
+
     private Button submitButton;
     private final String READ_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/get-goals.php";
     private final String WRITE_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/update-goals.php";
@@ -62,23 +83,9 @@ public class GoalsActivity extends Activity {
         TextView toolbarTitle = (TextView) findViewById(R.id.toolbar_title);
         toolbarTitle.setText("Goals");
 
-
-        weeklyGoalsDropdown = setDropdown(R.id.weekly_goal, R.array.weekly_goals_array);
-        activityLevelDropDown = setDropdown(R.id.activity_level, R.array.activity_level_array);
-        fatPercentage = setDropdown(R.id.fat_dropdown, R.array.percentages);
-        carbPercentage = setDropdown(R.id.carbs_dropdown, R.array.percentages);
-        proteinPercentage = setDropdown(R.id.protein_dropdown, R.array.percentages);
-        startingBodyweight = (EditText) findViewById(R.id.initial_bodyweight);
-        currentBodyWeight = (EditText) findViewById(R.id.current_bodyweight);
-        goalBodyWeight = (EditText) findViewById(R.id.goal_bodyweight);
-        calorieGoalEditText = (EditText) findViewById(R.id.calorie_goal);
-        submitButton = (Button) findViewById(R.id.submit_button);
-        //submitButton.setClickable(false);
-
-        setOnChangeEvents();
+        initializeViews();
 
         getCurrentGoals();
-
     }
 
 
@@ -94,73 +101,36 @@ public class GoalsActivity extends Activity {
         return dropdown;
     }
 
+    //populate the goals page with the users current goals.
     public void getCurrentGoals(){
-        SessionManager manager = SessionManager.getInstance(getApplicationContext());
-        String userID = manager.getUserID();
-        Map<String,String> params = new HashMap<String,String>();
-        params.put("userID", userID);
+        MyDatabaseHandler myDB = MyDatabaseHandler.getInstance(this);
+        List<String> details= myDB.getTableInfoAsString(MyDatabaseHandler.USER_DETAILS_TABLE_NAME);
 
-        Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    Log.e("in try", "in try");
-                    boolean requestOutcome = response.getBoolean("success");
-                    if(requestOutcome){
-                        String weeklyGoal = response.getString("weeklyGoal");
-                        String activityLevel = response.getString("activityLevel");
-                        String initialBodyweight = response.getString("initialBodyweight");
-                        String bodyweight = response.getString("bodyweight");
-                        String goalBodyweight = response.getString("goalBodyWeight");
-                        String calorieGoal = response.getString("calorieGoal");
-                        String fatPercentage = response.getString("fatPercentage") + "%";
-                        String proteinPercentage = response.getString("proteinPercentage") + "%";
-                        String carbPercentage = response.getString("carbPercentage") + "%";
+        //first row of details is the table's column names so we get(1)
+        String [] rowSplit = details.get(1).split(",");
 
-                        startingBodyweight.setText(initialBodyweight);
-                        currentBodyWeight.setText(bodyweight);
-                        goalBodyWeight.setText(goalBodyweight);
-                        calorieGoalEditText.setText(calorieGoal);
-                        setDropDownItem(weeklyGoalsDropdown, weeklyGoal);
-                        setDropDownItem(activityLevelDropDown, activityLevel);
-                        Log.e("fat %: " + fatPercentage,"  fat  ");
-                        setDropDownItem(GoalsActivity.this.fatPercentage, fatPercentage);
-                        setDropDownItem(GoalsActivity.this.carbPercentage, carbPercentage);
-                        setDropDownItem(GoalsActivity.this.proteinPercentage, proteinPercentage);
-                    }
-                    else{
-                        Log.e("response false" ,"false");
-                    }
+        String weeklyGoal = rowSplit[1];
+        String activityLevel = rowSplit[2];
+        String initialBodyweight = rowSplit[3];
+        String bodyweight = rowSplit[4];
+        String goalBodyweight = rowSplit[5];
+        String calorieGoal = rowSplit[6];
+        String fatPercentage = rowSplit[9] + "%";
+        String proteinPercentage = rowSplit[7] + "%";
+        String carbPercentage = rowSplit[8] + "%";
 
+        startingBodyweight.setText(initialBodyweight);
+        currentBodyWeight.setText(bodyweight);
+        goalBodyWeight.setText(goalBodyweight);
+        calorieGoalEditText.setText(calorieGoal);
+        setDropDownItem(weeklyGoalsDropdown, weeklyGoal);
+        setDropDownItem(activityLevelDropDown, activityLevel);
+        Log.e("fat %: " + fatPercentage,"  fat  ");
+        setDropDownItem(GoalsActivity.this.fatPercentage, fatPercentage);
+        setDropDownItem(GoalsActivity.this.carbPercentage, carbPercentage);
+        setDropDownItem(GoalsActivity.this.proteinPercentage, proteinPercentage);
 
-                } catch (JSONException e) {
-                    Log.e("in onResponse catch","in catch");
-                    e.printStackTrace();
-                }
-            }
-        };
-
-        Response.ErrorListener errorListener = new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                if (error instanceof TimeoutError || error instanceof NoConnectionError) {
-                    Toast.makeText(GoalsActivity.this, "no connection", Toast.LENGTH_SHORT).show();
-                } else if (error instanceof AuthFailureError) {
-                    Toast.makeText(GoalsActivity.this, "auth failure error", Toast.LENGTH_SHORT).show();
-                } else if (error instanceof ServerError) {
-                    Toast.makeText(GoalsActivity.this, "server error", Toast.LENGTH_SHORT).show();
-                } else if (error instanceof NetworkError) {
-                    Toast.makeText(GoalsActivity.this, "network error", Toast.LENGTH_SHORT).show();
-                } else if (error instanceof ParseError) {
-                    Toast.makeText(GoalsActivity.this, "parse error", Toast.LENGTH_SHORT).show();
-                }
-            }
-        };
-
-        CustomRequest request = new CustomRequest(Request.Method.POST, READ_DESTINATION, params, listener, errorListener);
-
-        RequestQueueHelper helper = RequestQueueHelper.getInstance();
-        helper.add(request);
+        setInitialFieldValues();
     }
 
 
@@ -179,7 +149,6 @@ public class GoalsActivity extends Activity {
 
             Map<String,String> params = new HashMap<String,String>();
             params.put("userID", userID);
-            params.put("initialBodyweight", startingBodyweight.getText().toString());
             params.put("bodyweight", currentBodyWeight.getText().toString());
             params.put("goalBodyweight", goalBodyWeight.getText().toString());
             params.put("calorieGoal", calorieGoalEditText.getText().toString());
@@ -198,6 +167,8 @@ public class GoalsActivity extends Activity {
                         Log.e("Response " + requestOutcome,"...response");
                         if(requestOutcome){
                             Toast.makeText(GoalsActivity.this, "goals updated", Toast.LENGTH_SHORT).show();
+
+                            pullUpdatesToLocalDB();
                         }
                         else{
                             Toast.makeText(GoalsActivity.this, "failed to update goals", Toast.LENGTH_SHORT).show();
@@ -236,30 +207,49 @@ public class GoalsActivity extends Activity {
     }
 
     public boolean isValidUpdateForm(){
-        if(fatPercentage != null && fatPercentage.getSelectedItem() !=null &&
-                proteinPercentage != null && proteinPercentage.getSelectedItem() !=null &&
-                carbPercentage != null && carbPercentage.getSelectedItem() !=null){
+        String cBodyWeight = currentBodyWeight.getText().toString();
+        String gBodyWeight = goalBodyWeight.getText().toString();
+        String calorieGoal = calorieGoalEditText.getText().toString();
 
-            String fat = fatPercentage.getSelectedItem().toString();
-            fat = fat.substring(0, fat.length() -1);
-            String protein = proteinPercentage.getSelectedItem().toString();
-            protein = protein.substring(0,protein.length() -1);
-            String carbs = carbPercentage.getSelectedItem().toString();
-            carbs = carbs.substring(0,carbs.length() -1);
+        if(cBodyWeight.length() != 0 && gBodyWeight.length() != 0 && calorieGoal.length() != 0){
+            if(fatPercentage != null && fatPercentage.getSelectedItem() !=null &&
+                    proteinPercentage != null && proteinPercentage.getSelectedItem() !=null &&
+                    carbPercentage != null && carbPercentage.getSelectedItem() !=null){
 
-            int fatInt = Integer.parseInt(fat);
-            int proteinInt = Integer.parseInt(protein);
-            int carbsInt = Integer.parseInt(carbs);
+                if(fieldsHaveBeenEdited()){
+                    String fat = fatPercentage.getSelectedItem().toString();
+                    fat = fat.substring(0, fat.length() -1);
+                    String protein = proteinPercentage.getSelectedItem().toString();
+                    protein = protein.substring(0,protein.length() -1);
+                    String carbs = carbPercentage.getSelectedItem().toString();
+                    carbs = carbs.substring(0,carbs.length() -1);
+
+                    int fatInt = Integer.parseInt(fat);
+                    int proteinInt = Integer.parseInt(protein);
+                    int carbsInt = Integer.parseInt(carbs);
 
 
-            if((fatInt + proteinInt + carbsInt) == 100){
-                return true;
+                    if((fatInt + proteinInt + carbsInt) == 100){
+                        return true;
+                    }
+                    else{
+                        Toast.makeText(this, "Fat, carbohydrate and protein must total 100%.", Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+                }
+                else{
+                    Toast.makeText(this, "No changes detected.", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+
             }
             else{
+                Toast.makeText(this, "All fields must be filled.", Toast.LENGTH_SHORT).show();
                 return false;
             }
         }
         else{
+            Toast.makeText(this, "All fields must be filled.", Toast.LENGTH_SHORT).show();
             return false;
         }
     }
@@ -274,7 +264,80 @@ public class GoalsActivity extends Activity {
         dropdown.setSelection(spinnerPosition);
     }
 
-    private void setOnChangeEvents(){
+    //check if fields have changed since the activity was loaded.
+    private boolean fieldsHaveBeenEdited(){
+        Log.e(currentBodyWeight.getText().toString(), " bodyweight in validator");
+        Log.e(loadedCurrentBodyWeight, "orig bodyweight in validate");
 
+        if(     loadedCurrentBodyWeight.equals(currentBodyWeight.getText().toString()) &&
+                loadedGoalBodyWeight.equals(goalBodyWeight.getText().toString()) &&
+                loadedCalorieGoalEditText.equals(calorieGoalEditText.getText().toString()) &&
+                loadedFatPercentage.equals(fatPercentage.getSelectedItem().toString()) &&
+                loadedCarbPercentage.equals(carbPercentage.getSelectedItem().toString()) &&
+                loadedProteinPercentage.equals(proteinPercentage.getSelectedItem().toString())   &&
+                loadedWeeklyGoalsDropdown.equals(weeklyGoalsDropdown.getSelectedItem().toString()) &&
+                loadedActivityLevelDropDown.equals(activityLevelDropDown.getSelectedItem().toString())
+                ){
+            return false;
+        }
+        return true;
+    }
+
+    private void setInitialFieldValues(){
+        loadedCurrentBodyWeight = currentBodyWeight.getText().toString();
+        loadedGoalBodyWeight = goalBodyWeight.getText().toString();
+        loadedCalorieGoalEditText = calorieGoalEditText.getText().toString();
+        loadedFatPercentage = fatPercentage.getSelectedItem().toString();
+        loadedCarbPercentage = carbPercentage.getSelectedItem().toString();
+        loadedProteinPercentage = proteinPercentage.getSelectedItem().toString();
+        loadedWeeklyGoalsDropdown = weeklyGoalsDropdown.getSelectedItem().toString();
+        loadedActivityLevelDropDown = activityLevelDropDown.getSelectedItem().toString();
+    }
+
+    private void initializeViews(){
+        weeklyGoalsDropdown = setDropdown(R.id.weekly_goal, R.array.weekly_goals_array);
+        activityLevelDropDown = setDropdown(R.id.activity_level, R.array.activity_level_array);
+        fatPercentage = setDropdown(R.id.fat_dropdown, R.array.percentages);
+        carbPercentage = setDropdown(R.id.carbs_dropdown, R.array.percentages);
+        proteinPercentage = setDropdown(R.id.protein_dropdown, R.array.percentages);
+        startingBodyweight = (TextView) findViewById(R.id.initial_bodyweight);
+        currentBodyWeight = (EditText) findViewById(R.id.current_bodyweight);
+        goalBodyWeight = (EditText) findViewById(R.id.goal_bodyweight);
+        calorieGoalEditText = (EditText) findViewById(R.id.calorie_goal);
+        submitButton = (Button) findViewById(R.id.submit_button);
+    }
+
+    private void pullUpdatesToLocalDB(){
+        SessionManager manager = SessionManager.getInstance(this);
+        String userID = manager.getUserID();
+
+
+        //If we are not connected to a network then we will not be able to read from the remote database and thus we
+        //won't be able to update the local database.
+        //
+        //By doing this check we will prevent the eventuality where we delete the local database entries and then fail to
+        //pull the updated entries from the remote database.
+        //
+        //In an ideal scenario we would create a new service class for updating the local database but since time is a constraint
+        //here we simply overwrite the local database rather than update it (and reuse our already implemented class).
+        ConnectivityManager cm = (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+        if(isConnected){
+            //before we can insert the local database with the updated values we must clear the pertinent DB tables
+            MyDatabaseHandler.getInstance(this).getWritableDatabase().execSQL("DELETE FROM UserDetails");
+            MyDatabaseHandler.getInstance(this).getWritableDatabase().execSQL("DELETE FROM BodyweightEntry");
+
+            //Now we call the DataRetrieverService to update the local database
+            Intent detailsIntent = new Intent(this, DataRetrieverService.class);
+            detailsIntent.putExtra(DataRetrieverService.PARAM_IN_MSG, "update-user-details");
+            detailsIntent.putExtra(DataRetrieverService.USER_ID_MSG, userID);
+            startService(detailsIntent);
+
+            Intent progressIntent = new Intent(this, DataRetrieverService.class);
+            progressIntent.putExtra(DataRetrieverService.PARAM_IN_MSG, "update-progress-entries");
+            progressIntent.putExtra(DataRetrieverService.USER_ID_MSG, userID);
+            startService(progressIntent);
+        }
     }
 }

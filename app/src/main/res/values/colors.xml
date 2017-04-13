@@ -10,4 +10,5 @@
     <color name="greyText">#808080</color>
     <color name="black">#000000</color>
     <color name="indigo_white">#C5CAE9</color>
+    <color name="colorPrimaryLight">#7284E8</color>
 </resources>

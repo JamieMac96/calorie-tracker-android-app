@@ -29,6 +29,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -59,103 +60,24 @@ public class ProgressActivity extends Activity {
 
         TextView toolbarTitle = (TextView) findViewById(R.id.toolbar_title);
         toolbarTitle.setText("Progress");
-
-        Log.e("now herre1","now herre1");
-
-        AsyncTask<Void, Void, String> task= new ProgressItemRetriever();
-
-        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
-        Log.e("now herre1","now herre1");
-
-
+        displayProgressEntries();
     }
 
-    public class ProgressItemRetriever extends AsyncTask<Void, Void, String>{
+    public void displayProgressEntries(){
+        Log.e("here", "here");
 
-        @Override
-        protected void onPreExecute(){
-            Log.e("pre execute ", "pre execute");
-            super.onPreExecute();
+
+        MyDatabaseHandler myDB = MyDatabaseHandler.getInstance(this);
+
+        List<String> progressDatabaseString = myDB.getTableInfoAsString(MyDatabaseHandler.BODYWEIGHT_ENTRY_TABLE_NAME);
+
+        ArrayList<ProgressItem> items = new ArrayList<ProgressItem>();
+
+        for(int i = 1 ; i < progressDatabaseString.size(); i++){
+            Log.e("row", progressDatabaseString.get(i));
+            String [] rowSplit = progressDatabaseString.get(i).split(",");
+            items.add(new ProgressItem(rowSplit[2], rowSplit[3]));
         }
-
-
-        //make synchronous volley request to get users bodyweight entries.
-        @Override
-        protected String doInBackground(Void... params) {
-            SessionManager manager = SessionManager.getInstance(getApplicationContext());
-            String userID = manager.getUserID();
-            Map<String, String> requestParams = new HashMap<String, String>();
-            requestParams.put("userID", userID);
-            Log.e("userID: ", userID + "");
-            ArrayList<ProgressItem> progressItems = new ArrayList<ProgressItem>();
-
-            //create synchronous request
-            RequestFuture<JSONObject> future = RequestFuture.newFuture();
-            CustomRequest request = new CustomRequest(Request.Method.POST, DESTINATION, requestParams, future, future);
-            RequestQueueHelper helper = RequestQueueHelper.getInstance();
-            helper.add(request);
-            Log.e(request.toString(), "request");
-
-            try {
-                JSONObject response = future.get(); // this will block
-                boolean requestOutcome = false;
-                try {
-                    requestOutcome = response.getBoolean("success");
-                    if (requestOutcome) {
-                        JSONArray result = response.getJSONArray("result");
-                        for (int i = 0; i < result.length(); i++) {
-                            JSONArray innerArray = result.getJSONArray(i);
-
-                            progressItems.add(new ProgressItem(innerArray.getString(0), innerArray.getString(1)));
-                            Log.e(progressItems.get(i).getWeight(), progressItems.get(i).getWeighInDate());
-                        }
-                    } else {
-                        Log.e("response false", "false");
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
-
-            String stringifiedItems = "";
-            for(int i = 0; i < progressItems.size(); i++){
-                if(i == progressItems.size() - 1){
-                    stringifiedItems += progressItems.get(i).toString();
-                }
-                else{
-                    stringifiedItems += progressItems.get(i).toString() + "#";
-                }
-            }
-
-            return stringifiedItems;
-        }
-
-
-        //parse result of doInBackground and send to displayResult method.
-        @Override
-        protected void onPostExecute(String resultFromDoInBackground) {
-            String [] splitResult = resultFromDoInBackground.split("#");
-            ArrayList<ProgressItem> items = new ArrayList<ProgressItem>();
-
-            for(int i = 0; i < splitResult.length; i++){
-                String [] progressItemComponents = splitResult[i].split(",");
-                if(progressItemComponents.length == 2) {
-                    items.add(new ProgressItem(progressItemComponents[0], progressItemComponents[1]));
-                }
-            }
-
-            displayResult(items);
-        }
-
-    }
-
-    public void displayResult(ArrayList<ProgressItem> items){
 
         ListView progressList = (ListView) findViewById(R.id.progress_list);
 

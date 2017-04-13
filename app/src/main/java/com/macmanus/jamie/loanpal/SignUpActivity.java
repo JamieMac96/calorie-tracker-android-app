@@ -92,7 +92,7 @@ public class SignUpActivity extends Activity {
                             Toast.makeText(SignUpActivity.this, "The sign up succeeded!", Toast.LENGTH_SHORT).show();
                             SessionManager manager = SessionManager.getInstance(getApplicationContext());
                             manager.createLoginSession(userID, emailAddr);
-                            goToMainActivity();
+                            goToGoalsActivity();
                         }
                         else{
                             Toast.makeText(SignUpActivity.this, "The sign up failed", Toast.LENGTH_SHORT).show();
@@ -133,6 +133,11 @@ public class SignUpActivity extends Activity {
     private void goToMainActivity(){
         Intent mainActivity = new Intent(SignUpActivity.this, MainActivity.class);
         startActivity(mainActivity);
+    }
+
+    private void goToGoalsActivity(){
+        Intent goalsActivity = new Intent(SignUpActivity.this, GoalsActivity.class);
+        startActivity(goalsActivity);
     }
 
     private boolean validateConfirmPassword() {

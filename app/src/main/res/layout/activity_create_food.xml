@@ -28,7 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Enter serving size (in grams)"
-        android:inputType="number"
+        android:inputType="numberDecimal"
         android:maxLength="5"
         />
 
@@ -38,7 +38,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Enter fat per serving"
-        android:inputType="number"
+        android:inputType="numberDecimal"
         android:maxLength="4"
         />
 
@@ -48,7 +48,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Enter protein per serving"
-        android:inputType="number"
+        android:inputType="numberDecimal"
         android:maxLength="4"
         />
 
@@ -58,7 +58,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Enter carbs per serving"
-        android:inputType="number"
+        android:inputType="numberDecimal"
         android:maxLength="4"
         />
 

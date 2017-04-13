@@ -33,7 +33,6 @@ public class SearchItemAdapter extends ArrayAdapter<FoodItem> {
 
     @Override @NonNull
     public View getView(int position, View convertView, ViewGroup parent) {
-        Log.e("executed", "executes");
         LayoutInflater myInflator = LayoutInflater.from(this.context);
 
         convertView = myInflator.inflate(R.layout.search_result_item, null);

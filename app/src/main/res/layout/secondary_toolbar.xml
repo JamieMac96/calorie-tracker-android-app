@@ -10,10 +10,10 @@
     app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
     <Button
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:id="@+id/toolbar_back_button"
-        android:background="@drawable/ic_arrow_back_white_48dp"/>
+        android:background="@mipmap/ic_arrow_back_white_36dp"/>
 
     <TextView
         android:layout_width="wrap_content"

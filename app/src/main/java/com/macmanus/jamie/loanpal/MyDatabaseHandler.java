@@ -19,6 +19,11 @@ import java.util.List;
 public class MyDatabaseHandler extends SQLiteOpenHelper {
     private static final int DATABSE_VERSION = 1;
     public static final String NAME = "local_calorie_helper.db";
+    public static final String BODYWEIGHT_ENTRY_TABLE_NAME = "BodyweightEntry";
+    public static final String DAILY_FOOD_TABLE_NAME = "DailyFood";
+    public static final String USER_FOOD_TABLE_NAME = "UserFood";
+    public static final String USER_DETAILS_TABLE_NAME = "UserDetails";
+
     private static MyDatabaseHandler myInstance;
 
 
@@ -27,6 +32,10 @@ public class MyDatabaseHandler extends SQLiteOpenHelper {
             myInstance = new MyDatabaseHandler(context.getApplicationContext());
         }
         return myInstance;
+    }
+
+    public static boolean hasInstance(){
+        return myInstance != null;
     }
 
     private MyDatabaseHandler(Context context){
@@ -90,7 +99,6 @@ public class MyDatabaseHandler extends SQLiteOpenHelper {
     //returns the content of a table as an arraylist of rows.
     //The rows are comma seperated values.
     public List<String> getTableInfoAsString(String tableName){
-        Log.e("CALLED FUNCTION","");
         List<String> tableData = new ArrayList<String>();
 
 

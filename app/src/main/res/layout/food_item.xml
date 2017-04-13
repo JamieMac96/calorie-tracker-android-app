@@ -1,45 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableRow android:paddingTop="10dp"
+<LinearLayout android:paddingTop="10dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:background="@drawable/mainpage_background"
-    android:paddingBottom="10dp"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:padding="10dp"
+    android:weightSum="100"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/home_food_item">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="20"
         android:textColor="@color/black"
-        android:id="@+id/item_name"
-        android:text="Oreos"/>
+        android:id="@+id/food_item_name"
+        android:text=""/>
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight=".5"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="20"
         android:textColor="@color/black"
-        android:id="@+id/item_protein"
-        android:text="13g"/>
+        android:id="@+id/food_item_fat"
+        android:text="" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight=".5"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="20"
         android:textColor="@color/black"
-        android:id="@+id/item_carbs"
-        android:text="47g"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight=".5"
-        android:textColor="@color/black"
-        android:id="@+id/item_fat"
-        android:text="28g"/>
+        android:id="@+id/food_item_carbs"
+        android:text=""
+         />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight=".5"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="20"
         android:textColor="@color/black"
-        android:id="@+id/item_cals"
-        android:text="450"/>
-</TableRow>
+        android:id="@+id/food_item_protein"
+        android:text="" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="20"
+        android:textColor="@color/black"
+        android:id="@+id/food_item_cals"
+        android:text="" />
+</LinearLayout>

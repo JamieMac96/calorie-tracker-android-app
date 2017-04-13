@@ -37,6 +37,7 @@
             >
 
             <TextView
+                android:id="@+id/calorie_goal_top"
                 android:layout_height="wrap_content"
                 android:layout_width="0dp"
                 android:layout_weight="1"
@@ -55,6 +56,7 @@
                 android:layout_weight=".1"/>
 
             <TextView
+                android:id="@+id/calories_consumed_top"
                 android:layout_height="wrap_content"
                 android:layout_width="0dp"
                 android:text="1600"
@@ -73,6 +75,7 @@
                 android:layout_weight=".1"/>
 
             <TextView
+                android:id="@+id/net_calories_top"
                 android:layout_height="wrap_content"
                 android:layout_width="0dp"
                 android:textSize="25sp"
@@ -119,232 +122,118 @@
         </LinearLayout>
     </LinearLayout>
 
-
-    <ScrollView
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:clickable="false"
-        android:duplicateParentState="true">
-
-        <TableLayout
+        <LinearLayout android:paddingTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:clickable="false"
-            android:duplicateParentState="true"
-            >
-            <TableRow
-                android:paddingTop="10dp"
-                >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textColor="@color/colorPrimary"
-                    android:textStyle="bold"
-                    android:text="Food Title"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".5"
-                    android:textColor="@color/colorPrimary"
-                    android:textStyle="bold"
-                    android:text="Protein"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".5"
-                    android:textColor="@color/colorPrimary"
-                    android:textStyle="bold"
-                    android:text="Carbohydrate"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".5"
-                    android:textColor="@color/colorPrimary"
-                    android:textStyle="bold"
-                    android:text="Fat"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".5"
-                    android:textColor="@color/colorPrimary"
-                    android:textStyle="bold"
-                    android:text="Calories"/>
-            </TableRow>
-
-
-            <include layout="@layout/food_item"/>
-            <include layout="@layout/food_item"/>
-            <include layout="@layout/food_item"/>
-            <include layout="@layout/food_item"/>
-            <include layout="@layout/food_item"/>
-            <include layout="@layout/food_item"/>
-            <include layout="@layout/food_item"/>
-            <include layout="@layout/food_item"/>
-            <include layout="@layout/food_item"/>
-            <include layout="@layout/food_item"/>
-            <include layout="@layout/food_item"/>
-            <include layout="@layout/food_item"/>
-            <include layout="@layout/food_item"/>
-            <include layout="@layout/food_item"/>
-            <include layout="@layout/food_item"/>
-            <include layout="@layout/food_item"/>
-            <include layout="@layout/food_item"/>
-            <include layout="@layout/food_item"/>
-
-            <TableRow
-                android:layout_marginTop="5dp"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"
-                >
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textColor="@color/black"
-                    android:textStyle="bold"
-                    android:text="Total"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".5"
-                    android:textColor="@color/black"
-                    android:textStyle="bold"
-                    android:text="65g"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".5"
-                    android:textColor="@color/black"
-                    android:textStyle="bold"
-                    android:text="235g"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".5"
-                    android:textColor="@color/black"
-                    android:textStyle="bold"
-                    android:text="140g"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".5"
-                    android:textColor="@color/black"
-                    android:textStyle="bold"
-                    android:text="2250"/>
-
-            </TableRow>
-        </TableLayout>
-    </ScrollView>
-
-    <TableLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-        <TableRow
-            android:layout_marginTop="5dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            >
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textColor="@color/black"
-                android:textStyle="bold"
-                android:text="Total"/>
+            android:background="@drawable/mainpage_background"
+            android:padding="10dp"
+            android:weightSum="100"
+            android:id="@+id/home_food_item">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight=".5"
-                android:textColor="@color/black"
-                android:textStyle="bold"
-                android:text="65g"/>
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="20"
+                android:textColor="@color/colorPrimary"
+                android:id="@+id/food_item_name"
+                android:text="Name"/>
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight=".5"
-                android:textColor="@color/black"
-                android:textStyle="bold"
-                android:text="235g"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight=".5"
-                android:textColor="@color/black"
-                android:textStyle="bold"
-                android:text="140g"/>
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="20"
+                android:textColor="@color/colorPrimary"
+                android:id="@+id/food_item_fat"
+                android:text="Fat" />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight=".5"
-                android:textColor="@color/black"
-                android:textStyle="bold"
-                android:text="2250"/>
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="20"
+                android:textColor="@color/colorPrimary"
+                android:id="@+id/food_item_carbs"
+                android:text="Carbs"
+                />
 
-        </TableRow>
-    </TableLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="20"
+                android:textColor="@color/colorPrimary"
+                android:id="@+id/food_item_protein"
+                android:text="Protein" />
 
-    <TableLayout
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="20"
+                android:textColor="@color/colorPrimary"
+                android:id="@+id/food_item_cals"
+                android:text="Cals" />
+        </LinearLayout>
+
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/home_food_item_list"
+        android:layout_weight="1"/>
+
+    <LinearLayout android:paddingTop="10dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content">
-        <TableRow
-            android:layout_marginTop="5dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            >
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textColor="@color/black"
-                android:textStyle="bold"
-                android:text="Total"/>
+        android:background="@drawable/mainpage_background"
+        android:padding="10dp"
+        android:weightSum="100"
+        android:id="@+id/nutrition_totals_row">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight=".5"
-                android:textColor="@color/black"
-                android:textStyle="bold"
-                android:text="65g"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="20"
+            android:textColor="@color/black"
+            android:id="@+id/total_name"
+            android:text="Total"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight=".5"
-                android:textColor="@color/black"
-                android:textStyle="bold"
-                android:text="235g"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight=".5"
-                android:textColor="@color/black"
-                android:textStyle="bold"
-                android:text="140g"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="20"
+            android:textColor="@color/black"
+            android:id="@+id/total_fat"
+            android:text="" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight=".5"
-                android:textColor="@color/black"
-                android:textStyle="bold"
-                android:text="2250"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="20"
+            android:textColor="@color/black"
+            android:id="@+id/total_carbs"
+            android:text=""
+            />
 
-        </TableRow>
-    </TableLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="20"
+            android:textColor="@color/black"
+            android:id="@+id/total_protein"
+            android:text="" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="20"
+            android:textColor="@color/black"
+            android:id="@+id/total_cals"
+            android:text="" />
+    </LinearLayout>
+
 
     </LinearLayout>
+
+
+
 
 
     <android.support.design.widget.NavigationView

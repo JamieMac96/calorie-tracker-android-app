@@ -1,5 +1,7 @@
 package com.macmanus.jamie.loanpal;
 
+import android.util.Log;
+
 /**
  * Created by jamie on 11/04/17.
  */
@@ -30,7 +32,7 @@ public class FoodItem {
         this.title = title;
         this.description = description;
         this.servingSize = servingSize;
-        this.numServings = 0;
+        this.numServings = 1;
         this.fatPerServing = fatPerServing;
         this.proteinPerServing = proteinPerServing;
         this.carbsPerServing = carbsPerServing;
@@ -99,6 +101,10 @@ public class FoodItem {
 
     public void setCarbsPerServing(double carbsPerServing) {
         this.carbsPerServing = carbsPerServing;
+    }
+
+    public int getCaloriesPerServing(){
+        return (int) ((fatPerServing * 9) + (proteinPerServing * 4) + (carbsPerServing * 4));
     }
 
     public String toString(){

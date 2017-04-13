@@ -3,22 +3,29 @@
 
     <group android:checkableBehavior="single">
 
+        <item android:id="@+id/home_navigation_item"
+            android:icon="@mipmap/ic_home_black_36dp"
+            android:title="Home"
+            android:onClick="closeDrawer">
+
+        </item>
+
         <item android:id="@+id/goals_item"
-            android:icon="@drawable/ic_add_white_24dp"
+            android:icon="@mipmap/ic_directions_walk_black_36dp"
             android:title="Goals"
             android:onClick="goToGoals">
 
         </item>
 
         <item android:id="@+id/progress_item"
-            android:icon="@drawable/ic_add_white_24dp"
+            android:icon="@mipmap/ic_trending_up_black_36dp"
             android:title="Progress"
             android:onClick="goToProgress">
 
         </item>
 
         <item android:id="@+id/add_food_item"
-            android:icon="@drawable/ic_add_white_24dp"
+            android:icon="@mipmap/ic_book_black_36dp"
             android:title="Add Food"
             android:onClick="goToAddFood"
             >
@@ -26,14 +33,14 @@
         </item>
 
         <item android:id="@+id/create_food_item"
-            android:icon="@drawable/ic_add_white_24dp"
+            android:icon="@mipmap/ic_add_box_black_36dp"
             android:title="Create New Food"
             android:onClick="goToCreateFood">
 
         </item>
 
         <item android:id="@+id/home_item"
-            android:icon="@drawable/ic_add_white_24dp"
+            android:icon="@mipmap/ic_keyboard_backspace_black_36dp"
             android:title="Logout"
             android:onClick="goToLogin">
 

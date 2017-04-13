@@ -1,6 +1,9 @@
 package com.macmanus.jamie.loanpal;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -91,6 +94,20 @@ public class FoodItemActivity extends AppCompatActivity {
                         }
                     });
                 }
+                else if(context.equals("mainPage")){
+                    submitfoodButton.setText("Edit Food");
+
+                    final FoodItem fItemCopy = fItem;
+
+                    submitfoodButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if(Double.parseDouble(numServings.getText().toString()) > 0){
+                                //TODO: update remote daily food entry
+                            }
+                        }
+                    });
+                }
             }
             catch (NumberFormatException e){
                 Toast.makeText(this, "Ivalid food", Toast.LENGTH_SHORT).show();
@@ -122,6 +139,7 @@ public class FoodItemActivity extends AppCompatActivity {
         proteinAmountText.setText(fItem.getProteinPerServing() + "");
         carbAmountText.setText(fItem.getCarbsPerServing() + "");
         foodTitle.setText(fItem.getTitle());
+        numServings.setText("" + nNumServings);
         foodDescription.setText(fItem.getDescription());
         servingSize.setText(fItem.getServingSize() + "");
         totalCals.setText(getCalories(fItem.getFatPerServing(), fItem.getCarbsPerServing(), fItem.getProteinPerServing()) + "");
@@ -157,15 +175,21 @@ public class FoodItemActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 if(numServings.getText().toString().length() > 0){
-                    double servings = Double.parseDouble(numServings.getText().toString());
-                    fatAmountText.setText((fItem.getFatPerServing() * servings) + "");
-                    proteinAmountText.setText((fItem.getProteinPerServing() * servings) + "");
-                    carbAmountText.setText((fItem.getCarbsPerServing() * servings) + "");
-                    double totalFat = fItem.getFatPerServing() * servings;
-                    double totalCarbs = fItem.getCarbsPerServing() * servings;
-                    double totalProtein = fItem.getProteinPerServing() * servings;
-                    Log.e("Num servings ","" + fItem.getNumServings());
-                    totalCals.setText(getCalories(totalFat, totalCarbs, totalProtein) + "");
+                    try{
+                        double servings = Double.parseDouble(numServings.getText().toString());
+                        fatAmountText.setText((fItem.getFatPerServing() * servings) + "");
+                        proteinAmountText.setText((fItem.getProteinPerServing() * servings) + "");
+                        carbAmountText.setText((fItem.getCarbsPerServing() * servings) + "");
+                        double totalFat = fItem.getFatPerServing() * servings;
+                        double totalCarbs = fItem.getCarbsPerServing() * servings;
+                        double totalProtein = fItem.getProteinPerServing() * servings;
+                        Log.e("Num servings ", "" + fItem.getNumServings());
+                        totalCals.setText(getCalories(totalFat, totalCarbs, totalProtein) + "");
+                    }
+                    catch(NumberFormatException e){
+                        e.printStackTrace();
+                    }
+
                 }
             }
         });
@@ -197,7 +221,9 @@ public class FoodItemActivity extends AppCompatActivity {
                     Log.e(requestOutcome + " food outcome", "outcome here");
 
                     if(requestOutcome){
-                        Toast.makeText(FoodItemActivity.this, "Food Added To Diary", Toast.LENGTH_SHORT);
+                        Log.e("FOOD ADDED", "FOOD ADDED");
+                        Toast.makeText(FoodItemActivity.this, "Food Added To Diary", Toast.LENGTH_SHORT).show();
+                        pullUpdatesToLocalDB();
                         goToAddFoodActivity();
                     }
                     else{
@@ -232,6 +258,40 @@ public class FoodItemActivity extends AppCompatActivity {
 
         RequestQueueHelper helper = RequestQueueHelper.getInstance();
         helper.add(request);
+    }
+
+    private void pullUpdatesToLocalDB(){
+        SessionManager manager = SessionManager.getInstance(this);
+        String userID = manager.getUserID();
+
+
+        //If we are not connected to a network then we will not be able to read from the remote database and thus we
+        //won't be able to update the local database.
+        //
+        //By doing this check we will prevent the eventuality where we delete the local database entries and then fail to
+        //pull the updated entries from the remote database.
+        //
+        //In an ideal scenario we would create a new service class for updating the local database but since time is a constraint
+        //here we simply overwrite the local database rather than update it (and reuse our already implemented class).
+        ConnectivityManager cm = (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+        if(isConnected){
+            //before we can insert the local database with the updated values we must clear the pertinent DB tables
+            MyDatabaseHandler.getInstance(this).getWritableDatabase().execSQL("DELETE FROM UserFood");
+            MyDatabaseHandler.getInstance(this).getWritableDatabase().execSQL("DELETE FROM DailyFood");
+
+            //Now we call the DataRetrieverService to update the local database
+            Intent userFoodsIntent = new Intent(this, DataRetrieverService.class);
+            userFoodsIntent.putExtra(DataRetrieverService.PARAM_IN_MSG, "update-user-foods");
+            userFoodsIntent.putExtra(DataRetrieverService.USER_ID_MSG, userID);
+            startService(userFoodsIntent);
+
+            Intent dailyFoodsIntent = new Intent(this, DataRetrieverService.class);
+            dailyFoodsIntent.putExtra(DataRetrieverService.PARAM_IN_MSG, "update-daily-foods");
+            dailyFoodsIntent.putExtra(DataRetrieverService.USER_ID_MSG, userID);
+            startService(dailyFoodsIntent);
+        }
     }
 
     private void goToAddFoodActivity(){

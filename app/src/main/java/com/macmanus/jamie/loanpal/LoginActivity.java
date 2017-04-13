@@ -1,5 +1,6 @@
 package com.macmanus.jamie.loanpal;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -47,7 +48,6 @@ public class LoginActivity extends AppCompatActivity {
     // UI references.
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
-    private TextView forgottenPassword;
     private final String REQUEST_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/login.php";
     MyResponseReceiver receiver;
 
@@ -60,9 +60,6 @@ public class LoginActivity extends AppCompatActivity {
 
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
-
-        forgottenPassword = (TextView) findViewById(R.id.forgotten_password);
-        forgottenPassword.setPaintFlags(forgottenPassword.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 
 
         mPasswordView = (EditText) findViewById(R.id.password);
@@ -78,6 +75,14 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
+        //if we get here and somehow a database exists, then attempting login will crash the app
+        //thus we check if the database exists and if it does we close and delete it
+        if(MyDatabaseHandler.hasInstance()){
+            MyDatabaseHandler.getInstance(getApplicationContext()).close();
+            getApplicationContext().deleteDatabase(MyDatabaseHandler.NAME);
+
+        }
+
         super.onStart();
         MyResponseReceiver receiver = new MyResponseReceiver();
         SessionManager manager = SessionManager.getInstance(getApplicationContext());
@@ -187,31 +192,23 @@ public class LoginActivity extends AppCompatActivity {
 
     public void retrieveUserData(String userID){
 
-        String getUserDetailsMessage = "uDetails";
-        String getProgressEntriesMessage = "pEntries";
-        String getUserFoodsMessage = "uFoods";
-        String getDailyFoodsMessage = "dFoods";
-
         Intent detailsIntent = new Intent(this, DataRetrieverService.class);
-        detailsIntent.putExtra(DataRetrieverService.PARAM_IN_MSG, getUserDetailsMessage);
+        detailsIntent.putExtra(DataRetrieverService.PARAM_IN_MSG, USER_DETAILS_MESSAGE);
         detailsIntent.putExtra(DataRetrieverService.USER_ID_MSG, userID);
         startService(detailsIntent);
 
         Intent progressIntent = new Intent(this, DataRetrieverService.class);
-        progressIntent.putExtra(DataRetrieverService.PARAM_IN_MSG, getProgressEntriesMessage);
-        Log.e("USERID IN SENDER1",userID + "");
+        progressIntent.putExtra(DataRetrieverService.PARAM_IN_MSG, PROGRESS_ENTRIES_MESSAGE);
         progressIntent.putExtra(DataRetrieverService.USER_ID_MSG, userID);
         startService(progressIntent);
 
         Intent uFoodsIntent = new Intent(this, DataRetrieverService.class);
-        uFoodsIntent.putExtra(DataRetrieverService.PARAM_IN_MSG, getUserFoodsMessage);
-        Log.e("USERID IN SENDER2",userID + "");
+        uFoodsIntent.putExtra(DataRetrieverService.PARAM_IN_MSG, USER_FOODS_MESSAGE);
         uFoodsIntent.putExtra(DataRetrieverService.USER_ID_MSG, userID);
         startService(uFoodsIntent);
 
         Intent dFoodsIntent = new Intent(this, DataRetrieverService.class);
-        dFoodsIntent.putExtra(DataRetrieverService.PARAM_IN_MSG, getDailyFoodsMessage);
-        Log.e("USERID IN SENDER3",userID + "");
+        dFoodsIntent.putExtra(DataRetrieverService.PARAM_IN_MSG, DAILY_FOODS_MESSAGE);
         dFoodsIntent.putExtra(DataRetrieverService.USER_ID_MSG, userID);
         startService(dFoodsIntent);
 
@@ -259,7 +256,13 @@ public class LoginActivity extends AppCompatActivity {
 
 
     private void goToMainActivity(){
-        unregisterReceiver(receiver);
+        try {
+            if (receiver!=null){
+                unregisterReceiver(receiver);
+            }
+        }catch (IllegalArgumentException e){
+            e.printStackTrace();
+        }
         Intent mainActivity = new Intent(this, MainActivity.class);
         startActivity(mainActivity);
     }

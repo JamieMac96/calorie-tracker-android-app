@@ -66,21 +66,25 @@ public class DataRetrieverService extends IntentService {
 
         try{
             int userIdentifier = Integer.parseInt(userID);
-            Log.e("in try","in try");
+
             //determine which method to call based on extra contents of intent.
+            //If we are using one of the predefined final strings (eg USER_DETAILS_MESSAGE)
+            //then we are retrieving the data at login and we will need to use the string to
+            //determine when to log the user in, otherwise we are simply updating the info and so we do
+            //not need to wait for the update.
             if (userIdentifier > 0) {
-                if (msg.equals(USER_DETAILS_MESSAGE)) {
+                if (msg.equals(USER_DETAILS_MESSAGE) || msg.equals("update-user-details")) {
                     Log.e("in if1","in if1");
-                    retrieveUserDetails(userIdentifier);
-                } else if (msg.equals(PROGRESS_ENTRIES_MESSAGE)) {
+                    retrieveUserDetails(userIdentifier, msg);
+                } else if (msg.equals(PROGRESS_ENTRIES_MESSAGE) || msg.equals("update-progress-entries")) {
                     Log.e("in if2","in if2");
-                    retrieveProgressEntries(userIdentifier);
-                } else if (msg.equals(USER_FOODS_MESSAGE)) {
+                    retrieveProgressEntries(userIdentifier, msg);
+                } else if (msg.equals(USER_FOODS_MESSAGE) || msg.equals("update-user-foods")) {
                     Log.e("in if3","in if3");
-                    retrieveUserFoods(userIdentifier);
-                } else if (msg.equals(DAILY_FOODS_MESSAGE)) {
+                    retrieveUserFoods(userIdentifier, msg);
+                } else if (msg.equals(DAILY_FOODS_MESSAGE) || msg.equals("update-daily-foods")) {
                     Log.e("in if4","in if4");
-                    retrieveDailyFoods(userIdentifier);
+                    retrieveDailyFoods(userIdentifier, msg);
                 }
             }
         }
@@ -91,7 +95,7 @@ public class DataRetrieverService extends IntentService {
 
     }
 
-    public void retrieveUserDetails(final int userID){
+    public void retrieveUserDetails(final int userID, final String message){
 
         Map<String,String> params = new HashMap<String,String>();
         params.put("userID", userID + "");
@@ -127,7 +131,7 @@ public class DataRetrieverService extends IntentService {
                                 "VALUES(" + userID + ",\"" +weeklyGoal + "\", \""+ activityLevel +"\", "+initialBodyweight +
                                 ","+bodyweight+", "+goalBodyweight+", "+calorieGoal+", "+proteinPercentage+", "+carbPercentage+", "+fatPercentage+");");
 
-                        sendBroadCast(USER_DETAILS_MESSAGE);
+                        sendBroadCast(message);
                     }
                     else{
 
@@ -153,8 +157,7 @@ public class DataRetrieverService extends IntentService {
         helper.add(request);
     }
 
-    public void retrieveProgressEntries(final int userID){
-        //TODO: write implementation for data retrieval when we have implemented ability to search for and add foods.
+    public void retrieveProgressEntries(final int userID, final String message){
 
 
         Map<String,String> params = new HashMap<String,String>();
@@ -170,24 +173,25 @@ public class DataRetrieverService extends IntentService {
                     if (requestOutcome) {
                         MyDatabaseHandler dbHandler = MyDatabaseHandler.getInstance(getApplicationContext());
 
-                        JSONArray result = response.getJSONArray("result");
-                        for (int i = 0; i < result.length(); i++) {
-                            JSONArray innerArray = result.getJSONArray(i);
-                            String bodyweight = innerArray.getString(1);
-                            String date = innerArray.getString(0);
+                        if(response.has("result")) {
+                            JSONArray result = response.getJSONArray("result");
+                            for (int i = 0; i < result.length(); i++) {
+                                JSONArray innerArray = result.getJSONArray(i);
+                                String bodyweight = innerArray.getString(1);
+                                String date = innerArray.getString(0);
 
-                            Date initDate = new SimpleDateFormat("dd/MM/yyyy").parse(date);
-                            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-                            String parsedDate = formatter.format(initDate);
+                                Date initDate = new SimpleDateFormat("dd/MM/yyyy").parse(date);
+                                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                                String parsedDate = formatter.format(initDate);
+
+                                dbHandler.getWritableDatabase().execSQL(
+                                        "INSERT INTO BodyweightEntry(EntryID, User_UserID, Weight, WeighInDate)" +
+                                                "VALUES(" + null + "," + userID + ", " + bodyweight + ", \"" + parsedDate + "\");");
 
 
-                            dbHandler.getWritableDatabase().execSQL(
-                                    "INSERT INTO BodyweightEntry(EntryID, User_UserID, Weight, WeighInDate)" +
-                                            "VALUES(" + null + "," +userID + ", "+bodyweight  + ", \""+ parsedDate +"\");");
-
-
+                            }
                         }
-                        sendBroadCast(PROGRESS_ENTRIES_MESSAGE);
+                        sendBroadCast(message);
                     } else {
                         Log.e("response false", "false");
                     }
@@ -215,8 +219,7 @@ public class DataRetrieverService extends IntentService {
 
     }
 
-    public void retrieveUserFoods(final int userID){
-        //TODO: write implementation for data retrieval when we have implemented ability to search for and add foods.
+    public void retrieveUserFoods(final int userID, final String message){
 
         Map<String,String> params = new HashMap<String,String>();
         params.put("userID", userID + "");
@@ -230,37 +233,29 @@ public class DataRetrieverService extends IntentService {
 
                     if(requestOutcome){
                         MyDatabaseHandler dbHandler = MyDatabaseHandler.getInstance(getApplicationContext());
-                        //TODO: add returned data to local database.
+                        if(response.has("result")) {
 
-                        JSONArray result = response.getJSONArray("result");
-                        for (int i = 0; i < result.length(); i++) {
-                            JSONArray innerArray = result.getJSONArray(i);
-                            String name = innerArray.getString(0);
-                            String description = innerArray.getString(1);
-                            String servingSize = innerArray.getString(2);
-                            String fatPerServing = innerArray.getString(3);
-                            String proteinPerServing = innerArray.getString(4);
-                            String carbPerServing = innerArray.getString(5);
-
-
-                            int calsPerServing = (int) ((Double.parseDouble(fatPerServing) * 9) + (Double.parseDouble(carbPerServing) * 4) + (Double.parseDouble(proteinPerServing) * 4));//calculate
+                            JSONArray result = response.getJSONArray("result");
+                            for (int i = 0; i < result.length(); i++) {
+                                JSONArray innerArray = result.getJSONArray(i);
+                                String name = innerArray.getString(0);
+                                String description = innerArray.getString(1);
+                                String servingSize = innerArray.getString(2);
+                                String fatPerServing = innerArray.getString(3);
+                                String proteinPerServing = innerArray.getString(4);
+                                String carbPerServing = innerArray.getString(5);
 
 
-                            dbHandler.getWritableDatabase().execSQL(
-                                    "INSERT INTO UserFood(FoodID, User_UserID, Name, Description, ServingSize, CaloriesPerServing, ProteinPerServing, FatPerServing, CarbsPerServing)" +
-                                            "VALUES(" + null + "," +userID + ", \""+name + "\", \""+ description +"\", "+servingSize+", "+calsPerServing+", " +
-                                            proteinPerServing+", "+fatPerServing+", "+carbPerServing+");");
+                                int calsPerServing = (int) ((Double.parseDouble(fatPerServing) * 9) + (Double.parseDouble(carbPerServing) * 4) + (Double.parseDouble(proteinPerServing) * 4));//calculate
 
-                            List<String> databaseString = dbHandler.getTableInfoAsString("UserFood");
-
-                            for(int k = 0; k < databaseString.size(); k++){
-                                Log.e("row", databaseString.get(i));
+                                dbHandler.getWritableDatabase().execSQL(
+                                        "INSERT INTO UserFood(FoodID, User_UserID, Name, Description, ServingSize, CaloriesPerServing, ProteinPerServing, FatPerServing, CarbsPerServing)" +
+                                                "VALUES(" + null + "," + userID + ", \"" + name + "\", \"" + description + "\", " + servingSize + ", " + calsPerServing + ", " +
+                                                proteinPerServing + ", " + fatPerServing + ", " + carbPerServing + ");");
                             }
                         }
 
-                        Log.e(response.getString("result"),"<--------DATA BACK USER FDS");
-
-                        sendBroadCast(USER_FOODS_MESSAGE);
+                        sendBroadCast(message);
                     }
                     else{
 
@@ -286,7 +281,8 @@ public class DataRetrieverService extends IntentService {
         helper.add(request);
     }
 
-    public void retrieveDailyFoods(int userID){
+    public void retrieveDailyFoods(final int userID, final String message){
+
 
         Map<String,String> params = new HashMap<String,String>();
         params.put("userID", userID + "");
@@ -295,13 +291,45 @@ public class DataRetrieverService extends IntentService {
             @Override
             public void onResponse(JSONObject response) {
                 try {
+                    Log.e("**IN retrieve daily", "retrieve daily foods**");
                     boolean requestOutcome = response.getBoolean("success");
-                    Log.e(requestOutcome + "daily food outcome", "outcome here");
+                    Log.e(requestOutcome + "daily food outcome", "outcome here daily fds");
+
+                    MyDatabaseHandler dbHandler = MyDatabaseHandler.getInstance(getApplicationContext());
 
                     if(requestOutcome){
-                        Log.e(response.getString("result"),"<--------DATA BACK");
-                        //TODO: add returned data to local database.
-                        sendBroadCast(DAILY_FOODS_MESSAGE);
+                        if(response.has("result")) {
+                            Log.e(response.getString("result"),"<--------DATA BACK daily");
+                            JSONArray result = response.getJSONArray("result");
+                            for (int i = 0; i < result.length(); i++) {
+                                JSONArray innerArray = result.getJSONArray(i);
+                                String name = innerArray.getString(0);
+                                String description = innerArray.getString(1);
+                                String servingSize = innerArray.getString(2);
+                                String numServings = innerArray.getString(3);
+                                String fatPerServing = innerArray.getString(4);
+                                String proteinPerServing = innerArray.getString(5);
+                                String carbPerServing = innerArray.getString(6);
+
+
+                                int calsPerServing = (int) ((Double.parseDouble(fatPerServing) * 9) + (Double.parseDouble(carbPerServing) * 4) + (Double.parseDouble(proteinPerServing) * 4));//calculate
+
+                                dbHandler.getWritableDatabase().execSQL(
+                                        "INSERT INTO DailyFood(FoodID, User_UserID, Name, Description, ServingSize, NumServings, CaloriesPerServing, ProteinPerServing, FatPerServing, CarbsPerServing)" +
+                                                "VALUES(" + null + "," + userID + ", \"" + name + "\", \"" + description + "\", " + servingSize + ", " + numServings + ", " + calsPerServing + ", " +
+                                                proteinPerServing + ", " + fatPerServing + ", " + carbPerServing + ");");
+                            }
+
+                            List<String> databaseString = dbHandler.getTableInfoAsString("DailyFood");
+
+                            for (int k = 0; k < databaseString.size(); k++) {
+                                Log.e("row daily fds", databaseString.get(k));
+                            }
+
+                            Log.e(response.getString("result"), "<--------DATA BACK daily FDS");
+                        }
+
+                        sendBroadCast(message);
                     }
                     else{
 
