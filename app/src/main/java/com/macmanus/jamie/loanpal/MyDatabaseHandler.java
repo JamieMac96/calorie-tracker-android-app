@@ -51,8 +51,10 @@ public class MyDatabaseHandler extends SQLiteOpenHelper {
                     "   Weight double NOT NULL,"                            +
                     "   WeighInDate NOT NULL);");
 
+
         myDB.execSQL("  CREATE TABLE DailyFood( "                           +
                 "       FoodID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"     +
+                "       GlobalFoodID INTEGER NOT NULL,"     +
                 "       User_UserID INTEGER NOT NULL, "                         +
                 "       Name VARCHAR(45) NOT NULL,"                         +
                 "       Description VARCHAR(200) NOT NULL,"                 +
@@ -76,8 +78,9 @@ public class MyDatabaseHandler extends SQLiteOpenHelper {
                 "       CarbGoalPercent INTEGER NOT NULL,"                      +
                 "       FatGoalPercent INTEGER NOT NULL); ");
 
+        //For this table the FoodID is equal to the GlobalFoodID in the remote database
         myDB.execSQL("  CREATE TABLE UserFood( "                            +
-                "       FoodID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"     +
+                "       FoodID INTEGER NOT NULL PRIMARY KEY,"     +
                 "       User_UserID INTEGER NOT NULL, "                         +
                 "       Name VARCHAR(45) NOT NULL,"                         +
                 "       Description VARCHAR(200) NOT NULL,"                 +

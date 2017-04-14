@@ -6,14 +6,17 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -67,16 +70,26 @@ public class GoalsActivity extends Activity {
     private final String READ_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/get-goals.php";
     private final String WRITE_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/update-goals.php";
 
+    //private final String READ_DESTINATION = "http://34.251.31.162/get-goals.php";
+    //private final String WRITE_DESTINATION = "http://34.251.31.162/update-goals.php";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_goals);
 
-        Button backButton = (Button) findViewById(R.id.toolbar_back_button);
-        backButton.setOnClickListener(new View.OnClickListener() {
+        final ImageButton backButton = (ImageButton) findViewById(R.id.toolbar_back_button);
+        backButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                finish();
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    backButton.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimaryLight));
+                }
+                else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    backButton.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
+                    finish();
+                }
+                return false;
             }
         });
 

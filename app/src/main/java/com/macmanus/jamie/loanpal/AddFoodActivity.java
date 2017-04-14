@@ -1,13 +1,19 @@
 package com.macmanus.jamie.loanpal;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -23,6 +29,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -33,6 +40,8 @@ import java.util.concurrent.ExecutionException;
 public class AddFoodActivity extends Activity {
     private SearchView searchView;
     private String DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/search-global-food.php";
+    //private String DESTINATION = "http://34.251.31.162/search-global-food.php;
+    private ImageButton speechButton;
     private String searchQuery;
     private List<FoodItem> userFoods;
     private List<FoodItem> filteredUserFoods;
@@ -42,49 +51,23 @@ public class AddFoodActivity extends Activity {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_add_food);
 
-        Button backButton = (Button) findViewById(R.id.toolbar_back_button);
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        setBackButtonClickListener();
 
         TextView toolbarTitle = (TextView) findViewById(R.id.toolbar_title);
         toolbarTitle.setText("Add Food");
 
         searchView = (SearchView) findViewById(R.id.search_bar);
+        speechButton = (ImageButton) findViewById(R.id.speech_button);
 
         getUserFoods();
+
         filteredUserFoods = new ArrayList<FoodItem>(userFoods);
+
         displayUserFoods();
 
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        handleSpeechInput();
 
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-                searchQuery = s;
-
-                if(searchQuery != null) {
-                    if (searchQuery.length() > 0) {
-                        AsyncTask<Void, Void, String> task = new AddFoodActivity.SearchItemRetriever();
-
-                        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                    }
-                }
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                searchQuery = newText;
-
-                applyFilterToFilteredFoods();
-
-                displayUserFoods();
-                return false;
-            }
-        });
+        setSearchViewQueryListener();
     }
 
 
@@ -96,8 +79,6 @@ public class AddFoodActivity extends Activity {
             Log.e("pre execute ", "pre execute");
             super.onPreExecute();
         }
-
-
         //make synchronous volley request to get users bodyweight entries.
         @Override
         protected String doInBackground(Void... params) {
@@ -153,7 +134,6 @@ public class AddFoodActivity extends Activity {
     }
 
 
-
     public void sendToSearchResultActivity(String items){
         if(items.equals("[]")){
             Toast.makeText(this, "No search results found", Toast.LENGTH_SHORT).show();
@@ -178,6 +158,41 @@ public class AddFoodActivity extends Activity {
             String [] splitRow = dbAsString.get(i).split(",");
             userFoods.add(new FoodItem(Integer.parseInt(splitRow[0]), splitRow[2], splitRow[3], Double.parseDouble(splitRow[4]),
                     Double.parseDouble(splitRow[7]), Double.parseDouble(splitRow[8]), Double.parseDouble(splitRow[6])));
+        }
+    }
+
+    private void handleSpeechInput(){
+        speechButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                promptSpeechInput();
+            }
+        });
+    }
+
+    public void promptSpeechInput(){
+        Intent i = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        i.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        i.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        i.putExtra(RecognizerIntent.EXTRA_PROMPT, "Say Something");
+        try {
+            startActivityForResult(i, 100);
+        }
+        catch(ActivityNotFoundException e){
+            Toast.makeText(this, "Sorry your device does not support speech language!", Toast.LENGTH_SHORT);
+        }
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent i){
+        super.onActivityResult(requestCode, resultCode, i);
+
+        switch(requestCode) {
+            case 100: if(resultCode == RESULT_OK && i != null){
+                ArrayList<String> result = i.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                searchView.setQuery(result.get(0), false);
+                searchView.clearFocus();
+            }
+                break;
         }
     }
 
@@ -219,10 +234,57 @@ public class AddFoodActivity extends Activity {
 
         //now we apply  the filter
         for(int i = 0; i < filteredUserFoods.size(); i++){
+            Log.e(filteredUserFoods.get(i).toString(),"<-----ROW");
             if(! filteredUserFoods.get(i).getTitle().toLowerCase().contains(searchQuery.toLowerCase())){
                 filteredUserFoods.remove(i);
                 i--;
             }
         }
+    }
+
+    private void setBackButtonClickListener(){
+        final ImageButton backButton = (ImageButton) findViewById(R.id.toolbar_back_button);
+        backButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    backButton.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimaryLight));
+                }
+                else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    backButton.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
+                    finish();
+                }
+                return false;
+            }
+        });
+    }
+
+    private void setSearchViewQueryListener(){
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                searchQuery = s.toLowerCase();
+
+                if(searchQuery != null) {
+                    if (searchQuery.length() > 0) {
+                        AsyncTask<Void, Void, String> task = new AddFoodActivity.SearchItemRetriever();
+
+                        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    }
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                searchQuery = newText.toLowerCase();
+
+                applyFilterToFilteredFoods();
+
+                displayUserFoods();
+                return false;
+            }
+        });
     }
 }

@@ -40,6 +40,8 @@ public class SignUpActivity extends Activity {
     private RequestQueueHelper helper = RequestQueueHelper.getInstance();
     private final String REQUEST_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/register.php";
 
+    //private final String REQUEST_DESTINATION = "http://34.251.31.162/register.php";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

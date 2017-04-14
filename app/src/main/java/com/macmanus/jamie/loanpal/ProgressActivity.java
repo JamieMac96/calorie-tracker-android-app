@@ -3,11 +3,14 @@ package com.macmanus.jamie.loanpal;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,6 +46,8 @@ public class ProgressActivity extends Activity {
 
     private final String DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/get-progress.php";
 
+    //private final String DESTINATION = "http://34.251.31.162/get-progress.php";
+
 
 
     @Override
@@ -50,11 +55,18 @@ public class ProgressActivity extends Activity {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_progress);
 
-        Button backButton = (Button) findViewById(R.id.toolbar_back_button);
-        backButton.setOnClickListener(new View.OnClickListener() {
+        final ImageButton backButton = (ImageButton) findViewById(R.id.toolbar_back_button);
+        backButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                finish();
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    backButton.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimaryLight));
+                }
+                else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    backButton.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
+                    finish();
+                }
+                return false;
             }
         });
 

@@ -8,6 +8,7 @@ import android.util.Log;
 
 public class FoodItem {
     private int id;
+    private int dailyFoodGlobalID;
     private String title;
     private String description;
     private double servingSize;
@@ -17,22 +18,20 @@ public class FoodItem {
     private double carbsPerServing;
 
     public FoodItem(int id, String title, String description, double servingSize, double numServings, double fatPerServing, double carbsPerServing, double proteinPerServing){
+        this(id, 0, title, description,servingSize, numServings, fatPerServing, carbsPerServing, proteinPerServing);
+    }
+
+    public FoodItem(int id, String title, String description, double servingSize, double fatPerServing, double carbsPerServing, double proteinPerServing){
+        this(id, 0, title, description,servingSize, 1, fatPerServing, carbsPerServing, proteinPerServing);
+    }
+
+    public FoodItem(int id, int globalID, String title, String description, double servingSize, double numServings, double fatPerServing, double carbsPerServing, double proteinPerServing){
         this.id =  id;
+        this.dailyFoodGlobalID = globalID;
         this.title = title;
         this.description = description;
         this.servingSize = servingSize;
         this.numServings = numServings;
-        this.fatPerServing = fatPerServing;
-        this.proteinPerServing = proteinPerServing;
-        this.carbsPerServing = carbsPerServing;
-    }
-
-    public FoodItem(int id, String title, String description, double servingSize, double fatPerServing, double carbsPerServing, double proteinPerServing){
-        this.id =  id;
-        this.title = title;
-        this.description = description;
-        this.servingSize = servingSize;
-        this.numServings = 1;
         this.fatPerServing = fatPerServing;
         this.proteinPerServing = proteinPerServing;
         this.carbsPerServing = carbsPerServing;
@@ -103,11 +102,19 @@ public class FoodItem {
         this.carbsPerServing = carbsPerServing;
     }
 
+    public int getDailyFoodGlobalID() {
+        return dailyFoodGlobalID;
+    }
+
+    public void setDailyFoodGlobalID(int dailyFoodGlobalID) {
+        this.dailyFoodGlobalID = dailyFoodGlobalID;
+    }
+
     public int getCaloriesPerServing(){
         return (int) ((fatPerServing * 9) + (proteinPerServing * 4) + (carbsPerServing * 4));
     }
 
     public String toString(){
-        return id + "," + title + "," + description + "," + servingSize + "," + numServings + "," + fatPerServing + "," + proteinPerServing + "," + carbsPerServing;
+        return id + "," + dailyFoodGlobalID + "," + title + "," + description + "," + servingSize + "," + numServings + "," + fatPerServing + "," + proteinPerServing + "," + carbsPerServing;
     }
 }

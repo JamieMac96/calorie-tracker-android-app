@@ -46,6 +46,17 @@ public class DataRetrieverService extends IntentService {
     private final String USER_FOODS_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/get-user-foods.php";
     private final String DAILY_FOODS_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/get-daily-foods.php";
 
+   // private final String USER_DETAILS_DESTINATION = "http://34.251.31.162/get-goals.php";
+    //private final String PROGRESS_ENTRIES_DESTINATION = "http://34.251.31.162/get-progress.php";
+   // private final String USER_FOODS_DESTINATION = "http://34.251.31.162/get-user-foods.php";
+   // private final String DAILY_FOODS_DESTINATION = "http://34.251.31.162/get-daily-foods.php";
+
+    //when we pull the daily foods down from the remote database to the local database
+    //then the data in the local database becomes the data we use.
+    //If it it becomes a new day then we want to update the local database from the remote database.
+    //To do this we check the systemDate against the actual date.
+    public static String SYSTEM_DATE;
+
 
 
     public DataRetrieverService(){
@@ -244,13 +255,14 @@ public class DataRetrieverService extends IntentService {
                                 String fatPerServing = innerArray.getString(3);
                                 String proteinPerServing = innerArray.getString(4);
                                 String carbPerServing = innerArray.getString(5);
+                                String globalFoodID = innerArray.getString(6);
 
 
                                 int calsPerServing = (int) ((Double.parseDouble(fatPerServing) * 9) + (Double.parseDouble(carbPerServing) * 4) + (Double.parseDouble(proteinPerServing) * 4));//calculate
 
                                 dbHandler.getWritableDatabase().execSQL(
                                         "INSERT INTO UserFood(FoodID, User_UserID, Name, Description, ServingSize, CaloriesPerServing, ProteinPerServing, FatPerServing, CarbsPerServing)" +
-                                                "VALUES(" + null + "," + userID + ", \"" + name + "\", \"" + description + "\", " + servingSize + ", " + calsPerServing + ", " +
+                                                "VALUES(" + globalFoodID + "," + userID + ", \"" + name + "\", \"" + description + "\", " + servingSize + ", " + calsPerServing + ", " +
                                                 proteinPerServing + ", " + fatPerServing + ", " + carbPerServing + ");");
                             }
                         }
@@ -282,6 +294,8 @@ public class DataRetrieverService extends IntentService {
     }
 
     public void retrieveDailyFoods(final int userID, final String message){
+        Date date = new Date();
+        SYSTEM_DATE = new SimpleDateFormat("yyyy-MM-dd").format(date);
 
 
         Map<String,String> params = new HashMap<String,String>();
@@ -291,7 +305,6 @@ public class DataRetrieverService extends IntentService {
             @Override
             public void onResponse(JSONObject response) {
                 try {
-                    Log.e("**IN retrieve daily", "retrieve daily foods**");
                     boolean requestOutcome = response.getBoolean("success");
                     Log.e(requestOutcome + "daily food outcome", "outcome here daily fds");
 
@@ -310,23 +323,17 @@ public class DataRetrieverService extends IntentService {
                                 String fatPerServing = innerArray.getString(4);
                                 String proteinPerServing = innerArray.getString(5);
                                 String carbPerServing = innerArray.getString(6);
+                                String dailyFoodRemoteID = innerArray.getString(7);
+
 
 
                                 int calsPerServing = (int) ((Double.parseDouble(fatPerServing) * 9) + (Double.parseDouble(carbPerServing) * 4) + (Double.parseDouble(proteinPerServing) * 4));//calculate
 
                                 dbHandler.getWritableDatabase().execSQL(
-                                        "INSERT INTO DailyFood(FoodID, User_UserID, Name, Description, ServingSize, NumServings, CaloriesPerServing, ProteinPerServing, FatPerServing, CarbsPerServing)" +
-                                                "VALUES(" + null + "," + userID + ", \"" + name + "\", \"" + description + "\", " + servingSize + ", " + numServings + ", " + calsPerServing + ", " +
+                                        "INSERT INTO DailyFood(FoodID, GlobalFoodID, User_UserID, Name, Description, ServingSize, NumServings, CaloriesPerServing, ProteinPerServing, FatPerServing, CarbsPerServing)" +
+                                                "VALUES(" + null + "," + dailyFoodRemoteID + "," +userID + ", \"" + name + "\", \"" + description + "\", " + servingSize + ", " + numServings + ", " + calsPerServing + ", " +
                                                 proteinPerServing + ", " + fatPerServing + ", " + carbPerServing + ");");
                             }
-
-                            List<String> databaseString = dbHandler.getTableInfoAsString("DailyFood");
-
-                            for (int k = 0; k < databaseString.size(); k++) {
-                                Log.e("row daily fds", databaseString.get(k));
-                            }
-
-                            Log.e(response.getString("result"), "<--------DATA BACK daily FDS");
                         }
 
                         sendBroadCast(message);
