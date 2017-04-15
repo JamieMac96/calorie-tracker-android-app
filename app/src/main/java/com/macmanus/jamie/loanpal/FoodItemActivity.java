@@ -52,11 +52,11 @@ public class FoodItemActivity extends AppCompatActivity {
     private TextView totalCals;
     private EditText numServings;
 
-    private final String UPDATE_FOOD_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/update-daily-food.php";
-    private final String ADD_FOOD_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/add-food.php";
+    //private final String UPDATE_FOOD_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/update-daily-food.php";
+    //private final String ADD_FOOD_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/add-food.php";
 
-    //private final String UPDATE_FOOD_DESTINATION = "http://34.251.31.162/update-daily-food.php";
-    //private final String ADD_FOOD_DESTINATION = "http://34.251.31.162/add-food.php";
+    private final String UPDATE_FOOD_DESTINATION = "http://34.251.31.162/update-daily-food.php";
+    private final String ADD_FOOD_DESTINATION = "http://34.251.31.162/add-food.php";
 
 
     @Override

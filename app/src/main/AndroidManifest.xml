@@ -44,6 +44,8 @@
             android:theme="@style/AppTheme"/>
         <activity android:name=".FoodItemActivity"
             android:theme="@style/AppTheme"/>
+        <activity android:name=".NutritionActivity"
+            android:theme="@style/AppTheme"/>
         <service
             android:name=".DataRetrieverService"
             android:enabled="true" >

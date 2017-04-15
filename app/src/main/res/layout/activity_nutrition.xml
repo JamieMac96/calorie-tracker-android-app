@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/nutrition_toolbar"
+        layout="@layout/secondary_toolbar" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/nutrition_fat"
+        android:text="Fat: "
+        android:textSize="20dp"
+        android:textColor="@color/black"
+        android:layout_below="@+id/nutrition_toolbar"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/nutrition_carbs"
+        android:text="Carbs: "
+        android:textSize="20dp"
+        android:textColor="@color/black"
+        android:layout_below="@+id/nutrition_fat"
+        />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/nutrition_protein"
+        android:text="Protein: "
+        android:textSize="20dp"
+        android:textColor="@color/black"
+        android:layout_below="@+id/nutrition_carbs"
+        />
+
+    <TextView
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/nutrition_calories"
+        android:text="Calorie Composition: "
+        android:textSize="20dp"
+        android:textColor="@color/black"
+        android:layout_below="@+id/nutrition_protein"
+        android:layout_centerHorizontal="true"
+        />
+
+
+    <LinearLayout
+        android:id="@+id/pie_chart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@+id/nutrition_protein"
+        android:layout_centerHorizontal="true">
+    </LinearLayout>
+
+</RelativeLayout>

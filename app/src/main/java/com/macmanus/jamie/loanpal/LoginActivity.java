@@ -49,8 +49,8 @@ public class LoginActivity extends AppCompatActivity {
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
     private MyResponseReceiver receiver;
-    private final String REQUEST_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/login.php";
-    //private final String REQUEST_DESTINATION = "http://34.251.31.162/login.php";
+    //private final String REQUEST_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/login.php";
+    private final String REQUEST_DESTINATION = "http://34.251.31.162/login.php";
 
 
     @Override

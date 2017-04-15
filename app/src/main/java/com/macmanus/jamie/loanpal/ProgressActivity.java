@@ -44,9 +44,9 @@ public class ProgressActivity extends Activity {
     private double [] testWeights;
     private String [] testDates;
 
-    private final String DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/get-progress.php";
+    //private final String DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/get-progress.php";
 
-    //private final String DESTINATION = "http://34.251.31.162/get-progress.php";
+    private final String DESTINATION = "http://34.251.31.162/get-progress.php";
 
 
 

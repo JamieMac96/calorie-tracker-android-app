@@ -39,8 +39,8 @@ import java.util.concurrent.ExecutionException;
 
 public class AddFoodActivity extends Activity {
     private SearchView searchView;
-    private String DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/search-global-food.php";
-    //private String DESTINATION = "http://34.251.31.162/search-global-food.php;
+    //private String DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/search-global-food.php";
+    private String DESTINATION = "http://34.251.31.162/search-global-food.php";
     private ImageButton speechButton;
     private String searchQuery;
     private List<FoodItem> userFoods;

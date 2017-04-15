@@ -41,8 +41,8 @@ public class CreateFoodActivity extends Activity {
     private EditText carbsPerServing;
     private EditText proteinPerServing;
     private Button submitFoodButton;
-    private final String REQUEST_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/add-global-food.php";
-    //private final String REQUEST_DESTINATION = "http://34.251.31.162/add-global-food.php";
+    //private final String REQUEST_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/add-global-food.php";
+    private final String REQUEST_DESTINATION = "http://34.251.31.162/add-global-food.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

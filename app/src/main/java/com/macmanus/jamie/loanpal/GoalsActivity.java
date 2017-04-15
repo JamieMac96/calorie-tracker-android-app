@@ -67,11 +67,11 @@ public class GoalsActivity extends Activity {
     private String  loadedActivityLevelDropDown;
 
     private Button submitButton;
-    private final String READ_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/get-goals.php";
-    private final String WRITE_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/update-goals.php";
+    //private final String READ_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/get-goals.php";
+    //private final String WRITE_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/update-goals.php";
 
-    //private final String READ_DESTINATION = "http://34.251.31.162/get-goals.php";
-    //private final String WRITE_DESTINATION = "http://34.251.31.162/update-goals.php";
+    private final String READ_DESTINATION = "http://34.251.31.162/get-goals.php";
+    private final String WRITE_DESTINATION = "http://34.251.31.162/update-goals.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

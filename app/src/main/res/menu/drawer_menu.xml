@@ -27,8 +27,14 @@
         <item android:id="@+id/add_food_item"
             android:icon="@mipmap/ic_book_black_36dp"
             android:title="Add Food"
-            android:onClick="goToAddFood"
-            >
+            android:onClick="goToAddFood">
+
+        </item>
+
+        <item android:id="@+id/nutrition_item"
+            android:icon="@mipmap/ic_pie_chart_black_36dp"
+            android:title="Nutrition"
+            android:onClick="goToNutrition">
 
         </item>
 

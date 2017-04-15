@@ -41,15 +41,15 @@ public class DataRetrieverService extends IntentService {
     public static final String USER_FOODS_MESSAGE= "uFoods";
     public static final String DAILY_FOODS_MESSAGE = "dFoods";
 
-    private final String USER_DETAILS_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/get-goals.php";
-    private final String PROGRESS_ENTRIES_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/get-progress.php";
-    private final String USER_FOODS_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/get-user-foods.php";
-    private final String DAILY_FOODS_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/get-daily-foods.php";
+    //private final String USER_DETAILS_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/get-goals.php";
+    //private final String PROGRESS_ENTRIES_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/get-progress.php";
+    //private final String USER_FOODS_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/get-user-foods.php";
+    //private final String DAILY_FOODS_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/get-daily-foods.php";
 
-   // private final String USER_DETAILS_DESTINATION = "http://34.251.31.162/get-goals.php";
-    //private final String PROGRESS_ENTRIES_DESTINATION = "http://34.251.31.162/get-progress.php";
-   // private final String USER_FOODS_DESTINATION = "http://34.251.31.162/get-user-foods.php";
-   // private final String DAILY_FOODS_DESTINATION = "http://34.251.31.162/get-daily-foods.php";
+    private final String USER_DETAILS_DESTINATION = "http://34.251.31.162/get-goals.php";
+    private final String PROGRESS_ENTRIES_DESTINATION = "http://34.251.31.162/get-progress.php";
+    private final String USER_FOODS_DESTINATION = "http://34.251.31.162/get-user-foods.php";
+    private final String DAILY_FOODS_DESTINATION = "http://34.251.31.162/get-daily-foods.php";
 
     //when we pull the daily foods down from the remote database to the local database
     //then the data in the local database becomes the data we use.

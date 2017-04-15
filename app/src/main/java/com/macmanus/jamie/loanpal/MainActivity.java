@@ -34,10 +34,10 @@ public class MainActivity extends AppCompatActivity {
     private List<FoodItem> todaysFoods;
     public static String SystemDate;
 
-    TextView fatTotal;
-    TextView proteinTotal;
-    TextView carbTotal;
-    TextView caloriesTotal;
+    private TextView fatTotal;
+    private TextView proteinTotal;
+    private TextView carbTotal;
+    private TextView caloriesTotal;
 
 
     @Override
@@ -134,13 +134,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void goToAddFood(MenuItem item) {
-        Intent progress = new Intent(this, AddFoodActivity.class);
-        startActivity(progress);
+        Intent addFood = new Intent(this, AddFoodActivity.class);
+        startActivity(addFood);
+    }
+
+    public void goToNutrition(MenuItem item) {
+        Intent nutrition = new Intent(this, NutritionActivity.class);
+        startActivity(nutrition);
     }
 
     public void goToCreateFood(MenuItem item) {
-        Intent progress = new Intent(this, CreateFoodActivity.class);
-        startActivity(progress);
+        Intent createFood = new Intent(this, CreateFoodActivity.class);
+        startActivity(createFood);
     }
 
     public void goToLogin(MenuItem item) {
@@ -274,5 +279,4 @@ public class MainActivity extends AppCompatActivity {
             startService(dailyFoodsIntent);
         }
     }
-
 }
