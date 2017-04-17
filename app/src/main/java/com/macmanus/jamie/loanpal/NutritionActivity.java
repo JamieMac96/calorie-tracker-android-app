@@ -72,9 +72,9 @@ public class NutritionActivity extends AppCompatActivity {
     }
 
     private void initializeTextViews(){
-        fatText.setTextColor(Color.BLUE);
-        proteinText.setTextColor(Color.RED);
-        carbsText.setTextColor(Color.GREEN);
+        fatText.setTextColor(ContextCompat.getColor(this, R.color.colorPrimary));
+        proteinText.setTextColor(ContextCompat.getColor(this, R.color.myRed));
+        carbsText.setTextColor(ContextCompat.getColor(this, R.color.green));
 
         fatGrams = 0;
         carbGrams = 0;
@@ -95,9 +95,13 @@ public class NutritionActivity extends AppCompatActivity {
             carbGrams += Double.parseDouble(rowSplit[10]) * numServings;
         }
 
-        fatText.append("" + fatGrams + "g");
-        proteinText.append("" + proteinGrams+ "g");
-        carbsText.append("" + carbGrams+ "g");
+        String fatGramsString = String.format("%.1f", fatGrams);
+        String proteinGramsString = String.format("%.1f", proteinGrams);
+        String carbGramsString = String.format("%.1f", proteinGrams);
+
+        fatText.append(fatGramsString + "g");
+        proteinText.append(proteinGramsString+ "g");
+        carbsText.append(carbGramsString+ "g");
 
     }
 

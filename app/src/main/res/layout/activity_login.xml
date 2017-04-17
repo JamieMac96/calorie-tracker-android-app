@@ -11,13 +11,12 @@
     <!-- Login progress -->
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="75dp"
-        android:background="@color/headerColor"
+        android:layout_height="56dp"
+        android:background="@color/colorPrimary"
         android:text="@string/sign_in"
         android:textColor="@color/white"
         android:gravity="center"
         android:textSize="30sp"
-        android:fontFamily="serif"
         />
 
 

@@ -103,8 +103,7 @@ public class CreateFoodActivity extends Activity {
 
                         if(requestOutcome){
                             Toast.makeText(CreateFoodActivity.this, "Food created successfully", Toast.LENGTH_SHORT).show();
-                            Intent mainActivity = new Intent(CreateFoodActivity.this, MainActivity.class);
-                            startActivity(mainActivity);
+                            finish();
                         }
                         else{
                             Toast.makeText(CreateFoodActivity.this, "Failed to create food", Toast.LENGTH_SHORT).show();
@@ -145,11 +144,24 @@ public class CreateFoodActivity extends Activity {
     }
 
     public boolean validateForm(){
-        if(isPosNum(servingSize.getText().toString()) && isPosNum(fatPerServing.getText().toString()) &&
-                isPosNum(carbsPerServing.getText().toString()) && isPosNum(proteinPerServing.getText().toString())){
-            if(title.getText().toString().length() <= 40 && description.getText().toString().length() <= 200 && servingSize.getText().toString().length() <= 5){
-                return true;
+        if(title.getText().toString().length() > 0 && description.getText().toString().length() > 0 &&
+                servingSize.getText().toString().length() > 0 && fatPerServing.getText().toString().length() > 0 &&
+                carbsPerServing.getText().toString().length() > 0 && proteinPerServing.getText().toString().length() > 0) {
+            if (title.getText().toString().length() >= 3 && description.getText().toString().length() >= 3) {
+                if (isPosNum(servingSize.getText().toString()) && isPosNum(fatPerServing.getText().toString()) &&
+                        isPosNum(carbsPerServing.getText().toString()) && isPosNum(proteinPerServing.getText().toString())) {
+                    if (title.getText().toString().length() <= 40 && description.getText().toString().length() <= 200 && servingSize.getText().toString().length() <= 5) {
+                        return true;
+                    }
+                } else {
+                    Toast.makeText(this, "Invalid input", Toast.LENGTH_LONG).show();
+                }
+            } else {
+                Toast.makeText(this, "Description and title must be at least 3 characters long.", Toast.LENGTH_LONG).show();
             }
+        }
+        else{
+            Toast.makeText(this, "All fields must be filled.", Toast.LENGTH_LONG).show();
         }
 
         return false;

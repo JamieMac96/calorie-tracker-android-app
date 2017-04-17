@@ -1,12 +1,16 @@
 package com.macmanus.jamie.loanpal;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -25,6 +29,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -80,15 +85,13 @@ public class MainActivity extends AppCompatActivity {
             pullUpdatesToLocalDB();
         }
 
-        Log.e("GETTING NEW FOODS", "GETTING NEW FOODS");
-
         getTodaysFoods();
 
         displayDailyFoods();
 
         setNutritionTotals();
 
-        setCalorieTopBar();
+        setNutritionTopBar();
 
         //if we update any foods that are displayed we also want to update the header of the main page
         TextView goalCaloriesTop = (TextView) findViewById(R.id.calorie_goal_top);
@@ -96,7 +99,6 @@ public class MainActivity extends AppCompatActivity {
         TextView netCaloriesTop = (TextView) findViewById(R.id.net_calories_top);
 
         //set consumed calories
-        Log.e("CONSUMED CALORIES",caloriesTotal.getText().toString());
         consumedCaloriesTop.setText(caloriesTotal.getText().toString());
 
         //get calorie goal from UserDetails table and set the corresponding element
@@ -109,6 +111,12 @@ public class MainActivity extends AppCompatActivity {
             //calculate the net calories
             String netCalories = String.format("%.1f", (Double.parseDouble(goalCalories) - Double.parseDouble(caloriesTotal.getText().toString())));
             netCaloriesTop.setText(netCalories);
+            if(Double.parseDouble(netCalories) < 0){
+                netCaloriesTop.setTextColor(ContextCompat.getColor(this, R.color.myRed));
+            }
+            else{
+                netCaloriesTop.setTextColor(ContextCompat.getColor(this, R.color.green));
+            }
         }
 
     }
@@ -152,6 +160,12 @@ public class MainActivity extends AppCompatActivity {
         //close and delete database
         MyDatabaseHandler.getInstance(getApplicationContext()).close();
         getApplicationContext().deleteDatabase(MyDatabaseHandler.NAME);
+
+        Intent updateRemoteDBIntent = new Intent(getApplicationContext(), DataSenderService.class);
+
+        PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(), 0, updateRemoteDBIntent, 0);
+        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarm.cancel(pendingIntent);
 
         //remove user session
         SessionManager manager = SessionManager.getInstance(this);
@@ -230,10 +244,10 @@ public class MainActivity extends AppCompatActivity {
 
 
         //format the doubles so onlly one decimal place is showing
-        String fatString = String.format("%.1f", fatSum) + "g";
-        String proteinString = String.format("%.1f", proteinSum) + "g";
-        String carbString = String.format("%.1f", carbSum) + "g";
-        String calString = String.format("%.1f", calorieSum);
+        String fatString = String.format("%.1f", fatSum) + "g ";
+        String proteinString = String.format("%.1f", proteinSum) + "g ";
+        String carbString = String.format("%.1f", carbSum) + "g ";
+        String calString = String.format("%d", (int)calorieSum);
 
         //finally, set views text to hold the formatted strings
         fatTotal.setText(fatString);
@@ -242,7 +256,8 @@ public class MainActivity extends AppCompatActivity {
         caloriesTotal.setText(calString);
     }
 
-    private void setCalorieTopBar(){
+
+    private void setNutritionTopBar(){
 
     }
 

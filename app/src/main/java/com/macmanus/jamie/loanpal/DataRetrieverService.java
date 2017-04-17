@@ -117,30 +117,32 @@ public class DataRetrieverService extends IntentService {
                 try {
                     boolean requestOutcome = response.getBoolean("success");
                     Log.e(requestOutcome + " u details outcome", "outcome here");
+                    Log.e("response length   ", response.length() + "");
 
                     if(requestOutcome){
-                        String userIDFromDB = response.getString("userID");
-                        String weeklyGoal = response.getString("weeklyGoal");
-                        String activityLevel = response.getString("activityLevel");
-                        String initialBodyweight = response.getString("initialBodyweight");
-                        String bodyweight = response.getString("bodyweight");
-                        String goalBodyweight = response.getString("goalBodyWeight");
-                        String calorieGoal = response.getString("calorieGoal");
-                        String fatPercentage = response.getString("fatPercentage");
-                        String proteinPercentage = response.getString("proteinPercentage");
-                        String carbPercentage = response.getString("carbPercentage");
+                        if(response.length() > 1){
+                            String userIDFromDB = response.getString("userID");
+                            String weeklyGoal = response.getString("weeklyGoal");
+                            String activityLevel = response.getString("activityLevel");
+                            String initialBodyweight = response.getString("initialBodyweight");
+                            String bodyweight = response.getString("bodyweight");
+                            String goalBodyweight = response.getString("goalBodyWeight");
+                            String calorieGoal = response.getString("calorieGoal");
+                            String fatPercentage = response.getString("fatPercentage");
+                            String proteinPercentage = response.getString("proteinPercentage");
+                            String carbPercentage = response.getString("carbPercentage");
 
-                        MyDatabaseHandler dbHandler = MyDatabaseHandler.getInstance(getApplicationContext());
+                            MyDatabaseHandler dbHandler = MyDatabaseHandler.getInstance(getApplicationContext());
 
-                        if(! (userID == Integer.parseInt(userIDFromDB))){
-                            Log.e("ERROR ERROR !!!!!", "UserIDs do not match");
+                            if(! (userID == Integer.parseInt(userIDFromDB))){
+                                Log.e("ERROR ERROR !!!!!", "UserIDs do not match");
+                            }
+                            dbHandler.getWritableDatabase().execSQL(
+                                    "INSERT INTO UserDetails(User_UserID, WeeklyGoal, ActivityLevel, InitialBodyweight, Bodyweight, " +
+                                            "GoalWeight, CalorieGoal, ProteinGoalPercent, CarbGoalPercent, FatGoalPercent)" +
+                                            "VALUES(" + userID + ",\"" +weeklyGoal + "\", \""+ activityLevel +"\", "+initialBodyweight +
+                                            ","+bodyweight+", "+goalBodyweight+", "+calorieGoal+", "+proteinPercentage+", "+carbPercentage+", "+fatPercentage+");");
                         }
-
-                        dbHandler.getWritableDatabase().execSQL(
-                        "INSERT INTO UserDetails(User_UserID, WeeklyGoal, ActivityLevel, InitialBodyweight, Bodyweight, " +
-                                "GoalWeight, CalorieGoal, ProteinGoalPercent, CarbGoalPercent, FatGoalPercent)" +
-                                "VALUES(" + userID + ",\"" +weeklyGoal + "\", \""+ activityLevel +"\", "+initialBodyweight +
-                                ","+bodyweight+", "+goalBodyweight+", "+calorieGoal+", "+proteinPercentage+", "+carbPercentage+", "+fatPercentage+");");
 
                         sendBroadCast(message);
                     }
@@ -149,7 +151,8 @@ public class DataRetrieverService extends IntentService {
                     }
 
                 } catch (JSONException e) {
-                    Log.e("in onResponse catch","in catch");
+                    Log.e("in onResponse catch","in catch user details");
+                    Log.e(e.getMessage() + "", "cause");
                     e.printStackTrace();
                 }
             }
@@ -208,7 +211,7 @@ public class DataRetrieverService extends IntentService {
                     }
                 }
                  catch (JSONException e) {
-                    Log.e("in onResponse catch","in catch");
+                    Log.e("in onResponse catch","in catch progress");
                     e.printStackTrace();
                 } catch (ParseException e) {
                     e.printStackTrace();
@@ -274,7 +277,7 @@ public class DataRetrieverService extends IntentService {
                     }
 
                 } catch (JSONException e) {
-                    Log.e("in onResponse catch","in catch");
+                    Log.e("in onResponse catch","in catch user foods");
                     e.printStackTrace();
                 }
             }

@@ -2,6 +2,7 @@ package com.macmanus.jamie.loanpal;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import org.achartengine.ChartFactory;
@@ -44,7 +45,7 @@ public class PieChart {
         DefaultRenderer defaultRenderer = new DefaultRenderer();
         SimpleSeriesRenderer simpleSeriesRenderer = null;
 
-        int[] colors = {Color.RED, Color.GREEN, Color.BLUE};
+        int[] colors = {ContextCompat.getColor(context, R.color.myRed), ContextCompat.getColor(context, R.color.green), ContextCompat.getColor(context, R.color.colorPrimary)};
 
         defaultRenderer.setLabelsTextSize(18);
         defaultRenderer.setLabelsColor(Color.BLACK);

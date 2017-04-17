@@ -67,10 +67,8 @@ public class GoalsActivity extends Activity {
     private String  loadedActivityLevelDropDown;
 
     private Button submitButton;
-    //private final String READ_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/get-goals.php";
     //private final String WRITE_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/update-goals.php";
 
-    private final String READ_DESTINATION = "http://34.251.31.162/get-goals.php";
     private final String WRITE_DESTINATION = "http://34.251.31.162/update-goals.php";
 
     @Override
@@ -116,34 +114,37 @@ public class GoalsActivity extends Activity {
 
     //populate the goals page with the users current goals.
     public void getCurrentGoals(){
-        MyDatabaseHandler myDB = MyDatabaseHandler.getInstance(this);
-        List<String> details= myDB.getTableInfoAsString(MyDatabaseHandler.USER_DETAILS_TABLE_NAME);
+        if(MyDatabaseHandler.hasInstance()) {
+            MyDatabaseHandler myDB = MyDatabaseHandler.getInstance(this);
+            List<String> details = myDB.getTableInfoAsString(MyDatabaseHandler.USER_DETAILS_TABLE_NAME);
+            if(details.size() > 1){
+                //first row of details is the table's column names so we get(1)
+                String[] rowSplit = details.get(1).split(",");
 
-        //first row of details is the table's column names so we get(1)
-        String [] rowSplit = details.get(1).split(",");
+                String weeklyGoal = rowSplit[1];
+                String activityLevel = rowSplit[2];
+                String initialBodyweight = rowSplit[3];
+                String bodyweight = rowSplit[4];
+                String goalBodyweight = rowSplit[5];
+                String calorieGoal = rowSplit[6];
+                String fatPercentage = rowSplit[9] + "%";
+                String proteinPercentage = rowSplit[7] + "%";
+                String carbPercentage = rowSplit[8] + "%";
 
-        String weeklyGoal = rowSplit[1];
-        String activityLevel = rowSplit[2];
-        String initialBodyweight = rowSplit[3];
-        String bodyweight = rowSplit[4];
-        String goalBodyweight = rowSplit[5];
-        String calorieGoal = rowSplit[6];
-        String fatPercentage = rowSplit[9] + "%";
-        String proteinPercentage = rowSplit[7] + "%";
-        String carbPercentage = rowSplit[8] + "%";
+                startingBodyweight.setText(initialBodyweight);
+                currentBodyWeight.setText(bodyweight);
+                goalBodyWeight.setText(goalBodyweight);
+                calorieGoalEditText.setText(calorieGoal);
+                setDropDownItem(weeklyGoalsDropdown, weeklyGoal);
+                setDropDownItem(activityLevelDropDown, activityLevel);
+                Log.e("fat %: " + fatPercentage, "  fat  ");
+                setDropDownItem(GoalsActivity.this.fatPercentage, fatPercentage);
+                setDropDownItem(GoalsActivity.this.carbPercentage, carbPercentage);
+                setDropDownItem(GoalsActivity.this.proteinPercentage, proteinPercentage);
 
-        startingBodyweight.setText(initialBodyweight);
-        currentBodyWeight.setText(bodyweight);
-        goalBodyWeight.setText(goalBodyweight);
-        calorieGoalEditText.setText(calorieGoal);
-        setDropDownItem(weeklyGoalsDropdown, weeklyGoal);
-        setDropDownItem(activityLevelDropDown, activityLevel);
-        Log.e("fat %: " + fatPercentage,"  fat  ");
-        setDropDownItem(GoalsActivity.this.fatPercentage, fatPercentage);
-        setDropDownItem(GoalsActivity.this.carbPercentage, carbPercentage);
-        setDropDownItem(GoalsActivity.this.proteinPercentage, proteinPercentage);
-
-        setInitialFieldValues();
+                setInitialFieldValues();
+            }
+        }
     }
 
 
@@ -281,18 +282,24 @@ public class GoalsActivity extends Activity {
     private boolean fieldsHaveBeenEdited(){
         Log.e(currentBodyWeight.getText().toString(), " bodyweight in validator");
         Log.e(loadedCurrentBodyWeight, "orig bodyweight in validate");
-
-        if(     loadedCurrentBodyWeight.equals(currentBodyWeight.getText().toString()) &&
-                loadedGoalBodyWeight.equals(goalBodyWeight.getText().toString()) &&
-                loadedCalorieGoalEditText.equals(calorieGoalEditText.getText().toString()) &&
-                loadedFatPercentage.equals(fatPercentage.getSelectedItem().toString()) &&
-                loadedCarbPercentage.equals(carbPercentage.getSelectedItem().toString()) &&
-                loadedProteinPercentage.equals(proteinPercentage.getSelectedItem().toString())   &&
-                loadedWeeklyGoalsDropdown.equals(weeklyGoalsDropdown.getSelectedItem().toString()) &&
-                loadedActivityLevelDropDown.equals(activityLevelDropDown.getSelectedItem().toString())
-                ){
-            return false;
+        try {
+            if (loadedCurrentBodyWeight.equals(currentBodyWeight.getText().toString()) &&
+                    loadedGoalBodyWeight.equals(goalBodyWeight.getText().toString()) &&
+                    loadedCalorieGoalEditText.equals(calorieGoalEditText.getText().toString()) &&
+                    loadedFatPercentage.equals(fatPercentage.getSelectedItem().toString()) &&
+                    loadedCarbPercentage.equals(carbPercentage.getSelectedItem().toString()) &&
+                    loadedProteinPercentage.equals(proteinPercentage.getSelectedItem().toString()) &&
+                    loadedWeeklyGoalsDropdown.equals(weeklyGoalsDropdown.getSelectedItem().toString()) &&
+                    loadedActivityLevelDropDown.equals(activityLevelDropDown.getSelectedItem().toString())
+                    ) {
+                return false;
+            }
         }
+        catch(NullPointerException e){
+
+        }
+
+
         return true;
     }
 
@@ -321,36 +328,8 @@ public class GoalsActivity extends Activity {
     }
 
     private void pullUpdatesToLocalDB(){
-        SessionManager manager = SessionManager.getInstance(this);
-        String userID = manager.getUserID();
-
-
-        //If we are not connected to a network then we will not be able to read from the remote database and thus we
-        //won't be able to update the local database.
-        //
-        //By doing this check we will prevent the eventuality where we delete the local database entries and then fail to
-        //pull the updated entries from the remote database.
-        //
-        //In an ideal scenario we would create a new service class for updating the local database but since time is a constraint
-        //here we simply overwrite the local database rather than update it (and reuse our already implemented class).
-        ConnectivityManager cm = (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
-        if(isConnected){
-            //before we can insert the local database with the updated values we must clear the pertinent DB tables
-            MyDatabaseHandler.getInstance(this).getWritableDatabase().execSQL("DELETE FROM UserDetails");
-            MyDatabaseHandler.getInstance(this).getWritableDatabase().execSQL("DELETE FROM BodyweightEntry");
-
-            //Now we call the DataRetrieverService to update the local database
-            Intent detailsIntent = new Intent(this, DataRetrieverService.class);
-            detailsIntent.putExtra(DataRetrieverService.PARAM_IN_MSG, "update-user-details");
-            detailsIntent.putExtra(DataRetrieverService.USER_ID_MSG, userID);
-            startService(detailsIntent);
-
-            Intent progressIntent = new Intent(this, DataRetrieverService.class);
-            progressIntent.putExtra(DataRetrieverService.PARAM_IN_MSG, "update-progress-entries");
-            progressIntent.putExtra(DataRetrieverService.USER_ID_MSG, userID);
-            startService(progressIntent);
-        }
+        LocalDatabaseUpdater myUpdater = new LocalDatabaseUpdater(this);
+        myUpdater.updateBodywegihtEntries();
+        myUpdater.updateUserDetails();
     }
 }

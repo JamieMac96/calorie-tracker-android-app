@@ -2,8 +2,11 @@ package com.macmanus.jamie.loanpal;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.media.Image;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
@@ -165,6 +168,7 @@ public class AddFoodActivity extends Activity {
         speechButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.e("SPEECH ONCLICK","SPEECH ONCLICK");
                 promptSpeechInput();
             }
         });
@@ -176,6 +180,7 @@ public class AddFoodActivity extends Activity {
         i.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
         i.putExtra(RecognizerIntent.EXTRA_PROMPT, "Say Something");
         try {
+            Log.e("IN TRY FOR SPEECH", "IN TRY FOR SPEECH");
             startActivityForResult(i, 100);
         }
         catch(ActivityNotFoundException e){
@@ -183,8 +188,17 @@ public class AddFoodActivity extends Activity {
         }
     }
 
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent i){
+        Log.e("HERE NOW1", "HERE NOW1");
         super.onActivityResult(requestCode, resultCode, i);
+
+        Log.e("HERE NOW", "HERE NOW");
+
+        Log.e("REQUEST CODE  ", requestCode + "");
+        Log.e("REsult CODE", resultCode + "  <");
+        Log.e("REsult CODE==RESULT_OK", (resultCode == RESULT_OK) + "");
+        Log.e("i==null  ", (i==null) + "");
 
         switch(requestCode) {
             case 100: if(resultCode == RESULT_OK && i != null){
@@ -212,16 +226,26 @@ public class AddFoodActivity extends Activity {
         foodList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                ConnectivityManager cm = (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+                boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+
                 Intent openFoodItem = new Intent(AddFoodActivity.this, FoodItemActivity.class);
                 String stringifiedFoodItem = finalItems.get(position).toString();
                 openFoodItem.putExtra("foodItem", stringifiedFoodItem);
 
-                //TODO: change the calledFrom flag to searchResultsOffline
                 //TODO: and in the FoodItemActivity add functionality to add to the dailyfood local table.
                 //TODO: Next we should add a service that continually checks for a network connection and when
                 //TODO: the connection appears we should update the remote dailyfoods table from the local table.
-                openFoodItem.putExtra("calledFrom", "searchResults");
-                startActivity(openFoodItem);
+
+                if(isConnected){
+                    openFoodItem.putExtra("calledFrom", "searchResults");
+                    startActivity(openFoodItem);
+                }
+                else {
+                    openFoodItem.putExtra("calledFrom", "searchResultsOffline");
+                    startActivity(openFoodItem);
+                }
             }
         });
 

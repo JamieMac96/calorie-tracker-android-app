@@ -1,7 +1,10 @@
 package com.macmanus.jamie.loanpal;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -33,6 +36,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +45,7 @@ import java.util.Map;
  * Created by jamie on 11/04/17.
  */
 
-public class FoodItemActivity extends AppCompatActivity {
+public class FoodItemActivity extends AppCompatActivity{
     private Button submitfoodButton;
     private TextView foodTitle;
     private TextView foodDescription;
@@ -50,6 +54,7 @@ public class FoodItemActivity extends AppCompatActivity {
     private TextView proteinAmountText;
     private TextView servingSize;
     private TextView totalCals;
+    TextView toolbarTitle;
     private EditText numServings;
 
     //private final String UPDATE_FOOD_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/update-daily-food.php";
@@ -64,22 +69,7 @@ public class FoodItemActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_food_item);
 
-
-        final ImageButton backButton = (ImageButton) findViewById(R.id.toolbar_back_button);
-        backButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    backButton.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimaryLight));
-                }
-                else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    backButton.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
-                    finish();
-                }
-                return false;
-            }
-        });
-        TextView toolbarTitle = (TextView) findViewById(R.id.toolbar_title);
+        initializeToolbar();
 
         initializeViews();
 
@@ -92,36 +82,16 @@ public class FoodItemActivity extends AppCompatActivity {
             try{
                 FoodItem fItem = initializeFoodItem(foodItemSplit);
                 setNumServingsMonitor(fItem);
-
-                if(context.equals("searchResults")){
-                    toolbarTitle.setText("Search Results");
-                    submitfoodButton.setText("Add Food");
-
-                    final FoodItem fItemCopy = fItem;
-
-                    submitfoodButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if(Double.parseDouble(numServings.getText().toString()) > 0){
-                                addDailyFood(fItemCopy);
-                            }
-                        }
-                    });
-                }
-                else if(context.equals("mainPage")){
-                    toolbarTitle.setText("Edit Food");
-                    submitfoodButton.setText("Edit Food");
-
-                    final FoodItem fItemCopy = fItem;
-
-                    submitfoodButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if(Double.parseDouble(numServings.getText().toString()) > 0){
-                                updateDailyFood(fItemCopy);
-                            }
-                        }
-                    });
+                if (context != null) {
+                    if(context.equals("searchResults")){
+                        handleAddFood(fItem);
+                    }
+                    else if(context.equals("searchResultsOffline")){
+                        handleAddFoodOffline(fItem);
+                    }
+                    else if(context.equals("mainPage")){
+                        handleEditFood(fItem);
+                    }
                 }
             }
             catch (NumberFormatException e){
@@ -132,11 +102,6 @@ public class FoodItemActivity extends AppCompatActivity {
         else{
             Toast.makeText(this, "Error: food item invalid", Toast.LENGTH_SHORT).show();
         }
-
-
-
-
-
     }
 
     public FoodItem initializeFoodItem(String [] foodItemSplit){
@@ -193,9 +158,9 @@ public class FoodItemActivity extends AppCompatActivity {
                 if(numServings.getText().toString().length() > 0){
                     try{
                         double servings = Double.parseDouble(numServings.getText().toString());
-                        fatAmountText.setText((fItem.getFatPerServing() * servings) + "");
-                        proteinAmountText.setText((fItem.getProteinPerServing() * servings) + "");
-                        carbAmountText.setText((fItem.getCarbsPerServing() * servings) + "");
+                        fatAmountText.setText(String.format("%.1f", (fItem.getFatPerServing() * servings)));
+                        proteinAmountText.setText(String.format("%.1f", (fItem.getProteinPerServing() * servings)));
+                        carbAmountText.setText(String.format("%.1f",(fItem.getCarbsPerServing() * servings)));
                         double totalFat = fItem.getFatPerServing() * servings;
                         double totalCarbs = fItem.getCarbsPerServing() * servings;
                         double totalProtein = fItem.getProteinPerServing() * servings;
@@ -342,36 +307,115 @@ public class FoodItemActivity extends AppCompatActivity {
     }
 
     private void pullUpdatesToLocalDB(){
-        SessionManager manager = SessionManager.getInstance(this);
-        String userID = manager.getUserID();
-
-
-        //If we are not connected to a network then we will not be able to read from the remote database and thus we
-        //won't be able to update the local database.
-        //
-        //By doing this check we will prevent the eventuality where we delete the local database entries and then fail to
-        //pull the updated entries from the remote database.
-        //
-        //In an ideal scenario we would create a new service class for updating the local database but since time is a constraint
-        //here we simply overwrite the local database rather than update it (and reuse our already implemented class).
-        ConnectivityManager cm = (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
-        if(isConnected){
-            //before we can insert the local database with the updated values we must clear the pertinent DB tables
-            MyDatabaseHandler.getInstance(this).getWritableDatabase().execSQL("DELETE FROM UserFood");
-            MyDatabaseHandler.getInstance(this).getWritableDatabase().execSQL("DELETE FROM DailyFood");
-
-            //Now we call the DataRetrieverService to update the local database
-            Intent userFoodsIntent = new Intent(this, DataRetrieverService.class);
-            userFoodsIntent.putExtra(DataRetrieverService.PARAM_IN_MSG, "update-user-foods");
-            userFoodsIntent.putExtra(DataRetrieverService.USER_ID_MSG, userID);
-            startService(userFoodsIntent);
-
-            Intent dailyFoodsIntent = new Intent(this, DataRetrieverService.class);
-            dailyFoodsIntent.putExtra(DataRetrieverService.PARAM_IN_MSG, "update-daily-foods");
-            dailyFoodsIntent.putExtra(DataRetrieverService.USER_ID_MSG, userID);
-            startService(dailyFoodsIntent);
-        }
+        LocalDatabaseUpdater myUpdater = new LocalDatabaseUpdater(this);
+        myUpdater.updateDailyFoods();
+        myUpdater.updateUserFoods();
     }
+
+    private void initializeToolbar(){
+        final ImageButton backButton = (ImageButton) findViewById(R.id.toolbar_back_button);
+        backButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    backButton.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimaryLight));
+                }
+                else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    backButton.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
+                    finish();
+                }
+                return false;
+            }
+        });
+        toolbarTitle = (TextView) findViewById(R.id.toolbar_title);
+    }
+
+    private void handleAddFood(FoodItem fItem){
+        toolbarTitle.setText("Search Results");
+        submitfoodButton.setText("Add Food");
+
+        final FoodItem fItemCopy = fItem;
+
+        submitfoodButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(Double.parseDouble(numServings.getText().toString()) > 0){
+                    addDailyFood(fItemCopy);
+                }
+            }
+        });
+    }
+
+    private void handleAddFoodOffline(FoodItem fItem){
+        toolbarTitle.setText("Search Results");
+        submitfoodButton.setText("Add Food");
+
+        final FoodItem fItemCopy = fItem;
+
+        submitfoodButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(Double.parseDouble(numServings.getText().toString()) > 0){
+                    addDailyFoodOffline(fItemCopy);
+                }
+            }
+        });
+    }
+
+    private void handleEditFood(FoodItem fItem){
+        toolbarTitle.setText("Edit Food");
+        submitfoodButton.setText("Edit Food");
+
+        final FoodItem fItemCopy = fItem;
+
+        submitfoodButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(Double.parseDouble(numServings.getText().toString()) > 0){
+                    updateDailyFood(fItemCopy);
+                }
+            }
+        });
+    }
+
+    private void addDailyFoodOffline(FoodItem fItem){
+        MyDatabaseHandler myDB = MyDatabaseHandler.getInstance(this);
+        int dailyFoodRemoteID = 0;
+        int foodID = fItem.getId();
+        int userID = Integer.parseInt(SessionManager.getInstance(this).getUserID());
+        String name = fItem.getTitle();
+        String description = fItem.getDescription();
+        double servingSize = fItem.getServingSize();
+        double numServings = Double.parseDouble(this.numServings.getText().toString());
+        int calsPerServing = fItem.getCaloriesPerServing();
+        double proteinPerServing = fItem.getProteinPerServing();
+        double carbPerServing = fItem.getCarbsPerServing();
+        double fatPerServing = fItem.getFatPerServing();
+
+        myDB.getWritableDatabase().execSQL(
+        "INSERT INTO DailyFood(FoodID, GlobalFoodID, User_UserID, Name, Description, ServingSize, NumServings, CaloriesPerServing, ProteinPerServing, FatPerServing, CarbsPerServing)" +
+                "VALUES(" + null + "," + dailyFoodRemoteID + "," +userID + ", \"" + name + "\", \"" + description + "\", " + servingSize + ", " + numServings + ", " + calsPerServing + ", " +
+                proteinPerServing + ", " + fatPerServing + ", " + carbPerServing + ");");
+
+        Toast.makeText(this, "Updating local database. ", Toast.LENGTH_LONG).show();
+
+        Intent updateRemoteDBIntent = new Intent(this, DataSenderService.class);
+
+        final int _id = (int) System.currentTimeMillis();
+        Log.e("INFO PASSED: ", numServings+ ", "+ foodID + ", "+ _id);
+
+        updateRemoteDBIntent.putExtra("foodID", foodID);
+        updateRemoteDBIntent.putExtra("numServings", numServings);
+        updateRemoteDBIntent.putExtra("pendingIntentID", _id);
+
+        PendingIntent pendingIntent = PendingIntent.getService(this, _id, updateRemoteDBIntent, 0);
+
+        AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+        Calendar cal = Calendar.getInstance();
+
+        manager.setRepeating(AlarmManager.RTC, cal.getTimeInMillis(), 10*1000, pendingIntent);
+
+    }
+
 }

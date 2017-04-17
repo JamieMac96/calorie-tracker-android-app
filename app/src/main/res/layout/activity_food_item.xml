@@ -29,7 +29,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp">
+        android:paddingLeft="10dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -40,7 +40,7 @@
             />
 
         <TextView
-            android:layout_width="123dp"
+            android:layout_width="93dp"
             android:layout_height="match_parent"
             />
 
@@ -52,6 +52,7 @@
             android:layout_marginRight="10dp"
             android:inputType="numberDecimal"
             android:text="1"
+            android:maxLength="4"
             />
 
     </LinearLayout>
@@ -70,13 +71,13 @@
             />
 
         <TextView
-            android:layout_width="190dp"
+            android:layout_width="160dp"
             android:layout_height="match_parent"
             />
 
         <TextView
             android:id="@+id/item_serving_size"
-            android:layout_width="80dp"
+            android:layout_width="105dp"
             android:layout_height="match_parent"
             android:layout_marginEnd="10dp"
             android:layout_marginRight="10dp"
@@ -103,13 +104,13 @@
             />
 
         <TextView
-            android:layout_width="270dp"
+            android:layout_width="240dp"
             android:layout_height="match_parent"
             />
 
         <TextView
             android:id="@+id/fat_grams"
-            android:layout_width="80dp"
+            android:layout_width="105dp"
             android:layout_height="match_parent"
             android:layout_marginEnd="10dp"
             android:layout_marginRight="10dp"
@@ -135,13 +136,13 @@
             />
 
         <TextView
-            android:layout_width="168dp"
+            android:layout_width="138dp"
             android:layout_height="match_parent"
             />
 
         <TextView
             android:id="@+id/carb_grams"
-            android:layout_width="80dp"
+            android:layout_width="105dp"
             android:layout_height="match_parent"
             android:layout_marginEnd="10dp"
             android:layout_marginRight="10dp"
@@ -167,13 +168,13 @@
             />
 
         <TextView
-            android:layout_width="235dp"
+            android:layout_width="205dp"
             android:layout_height="match_parent"
             />
 
         <TextView
             android:id="@+id/protein_grams"
-            android:layout_width="80dp"
+            android:layout_width="105dp"
             android:layout_height="match_parent"
             android:layout_marginEnd="10dp"
             android:layout_marginRight="10dp"
@@ -199,13 +200,13 @@
             />
 
         <TextView
-            android:layout_width="225dp"
+            android:layout_width="195dp"
             android:layout_height="match_parent"
             />
 
         <TextView
             android:id="@+id/total_calories"
-            android:layout_width="80dp"
+            android:layout_width="105dp"
             android:layout_height="match_parent"
             android:layout_marginEnd="10dp"
             android:layout_marginRight="10dp"

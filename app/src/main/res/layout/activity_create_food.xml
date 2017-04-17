@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/create_food_layout">
+    android:id="@+id/create_food_layout"
+    >
 
     <include
         layout="@layout/secondary_toolbar" />
@@ -12,7 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Enter food title"
-        android:maxLength="40"
+        android:maxLength="20"
+        android:padding="10dp"
         />
 
     <EditText
@@ -20,7 +22,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Enter food description"
-        android:maxLength="200"
+        android:maxLength="100"
+        android:padding="10dp"
         />
 
     <EditText
@@ -30,6 +33,7 @@
         android:hint="Enter serving size (in grams)"
         android:inputType="numberDecimal"
         android:maxLength="5"
+        android:padding="10dp"
         />
 
 
@@ -40,6 +44,7 @@
         android:hint="Enter fat per serving"
         android:inputType="numberDecimal"
         android:maxLength="4"
+        android:padding="10dp"
         />
 
 
@@ -50,6 +55,7 @@
         android:hint="Enter protein per serving"
         android:inputType="numberDecimal"
         android:maxLength="4"
+        android:padding="10dp"
         />
 
 
@@ -60,6 +66,7 @@
         android:hint="Enter carbs per serving"
         android:inputType="numberDecimal"
         android:maxLength="4"
+        android:padding="10dp"
         />
 
 
@@ -68,6 +75,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="submit"
+        android:padding="10dp"
         android:onClick="submitFood"/>
 
 

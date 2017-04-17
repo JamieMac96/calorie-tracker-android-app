@@ -46,9 +46,9 @@ public class HomeFoodItemAdpter extends ArrayAdapter {
 
         double numServings = foodItems.get(position).getNumServings();
 
-        String fatString = String.format("%.1f", foodItems.get(position).getFatPerServing() * numServings) + "g";
-        String proteinString = String.format("%.1f", (foodItems.get(position).getProteinPerServing() * numServings)) + "g";
-        String carbString = String.format("%.1f", (foodItems.get(position).getCarbsPerServing() * numServings)) + "g";
+        String fatString = String.format("%.1f", foodItems.get(position).getFatPerServing() * numServings) + "g ";
+        String proteinString = String.format("%.1f", (foodItems.get(position).getProteinPerServing() * numServings)) + "g ";
+        String carbString = String.format("%.1f", (foodItems.get(position).getCarbsPerServing() * numServings)) + "g ";
         String calString = String.format("%.1f", (foodItems.get(position).getCaloriesPerServing() * numServings));
 
         title.setText(foodItems.get(position).getTitle());

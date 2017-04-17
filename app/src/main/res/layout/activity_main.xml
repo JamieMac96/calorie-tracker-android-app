@@ -41,7 +41,7 @@
                 android:layout_height="wrap_content"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:text="2500"
+                android:text="2000"
                 android:gravity="center"
                 android:textSize="25sp"
                 android:textColor="#00b200">
@@ -59,11 +59,11 @@
                 android:id="@+id/calories_consumed_top"
                 android:layout_height="wrap_content"
                 android:layout_width="0dp"
-                android:text="1600"
+                android:text="0"
                 android:gravity="center"
                 android:textSize="25sp"
                 android:layout_weight="1"
-                android:textColor="#FF0000">
+                android:textColor="@color/myRed">
             </TextView>
 
             <TextView
@@ -79,7 +79,7 @@
                 android:layout_height="wrap_content"
                 android:layout_width="0dp"
                 android:textSize="25sp"
-                android:text="900"
+                android:text="2000"
                 android:gravity="center"
                 android:layout_weight="1"
                 android:textColor="#00b200">
@@ -192,6 +192,7 @@
             android:layout_height="match_parent"
             android:layout_weight="20"
             android:textColor="@color/black"
+            android:textStyle="bold"
             android:id="@+id/total_name"
             android:text="Total"/>
 
@@ -199,6 +200,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="20"
+            android:textStyle="bold"
             android:textColor="@color/black"
             android:id="@+id/total_fat"
             android:text="" />
@@ -207,6 +209,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="20"
+            android:textStyle="bold"
             android:textColor="@color/black"
             android:id="@+id/total_carbs"
             android:text=""
@@ -216,6 +219,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="20"
+            android:textStyle="bold"
             android:textColor="@color/black"
             android:id="@+id/total_protein"
             android:text="" />
@@ -224,6 +228,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="20"
+            android:textStyle="bold"
             android:textColor="@color/black"
             android:id="@+id/total_cals"
             android:text="" />

@@ -10,6 +10,9 @@
     <color name="greyText">#808080</color>
     <color name="black">#000000</color>
     <color name="indigo_white">#C5CAE9</color>
+    <color name="green">#00b200</color>
+    <color name="myRed">#de0000</color>
+
     <!--<color name="colorPrimaryLight">#7284E8</color>-->
     <color name="colorPrimaryLight">#596BCF</color>
 </resources>

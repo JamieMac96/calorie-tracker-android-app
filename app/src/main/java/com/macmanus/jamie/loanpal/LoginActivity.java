@@ -1,6 +1,8 @@
 package com.macmanus.jamie.loanpal;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -55,6 +57,8 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Intent updateRemoteDBIntent = new Intent(getApplicationContext(), DataSenderService.class);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
