@@ -54,14 +54,16 @@ public class FoodItemActivity extends AppCompatActivity{
     private TextView proteinAmountText;
     private TextView servingSize;
     private TextView totalCals;
-    TextView toolbarTitle;
+    private TextView toolbarTitle;
     private EditText numServings;
+    private String calledFrom;
 
     //private final String UPDATE_FOOD_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/update-daily-food.php";
     //private final String ADD_FOOD_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/add-food.php";
 
     private final String UPDATE_FOOD_DESTINATION = "http://34.251.31.162/update-daily-food.php";
     private final String ADD_FOOD_DESTINATION = "http://34.251.31.162/add-food.php";
+    private final String REMOVE_FOOD_DESTINATION = "http://34.251.31.162/remove-food.php";
 
 
     @Override
@@ -74,7 +76,7 @@ public class FoodItemActivity extends AppCompatActivity{
         initializeViews();
 
         String stringFoodItem = getIntent().getExtras().getString("foodItem");
-        String context = getIntent().getExtras().getString("calledFrom");
+        calledFrom = getIntent().getExtras().getString("calledFrom");
 
 
         String [] foodItemSplit = stringFoodItem.split(",");
@@ -82,14 +84,14 @@ public class FoodItemActivity extends AppCompatActivity{
             try{
                 FoodItem fItem = initializeFoodItem(foodItemSplit);
                 setNumServingsMonitor(fItem);
-                if (context != null) {
-                    if(context.equals("searchResults")){
+                if (calledFrom != null) {
+                    if(calledFrom.equals("searchResults")){
                         handleAddFood(fItem);
                     }
-                    else if(context.equals("searchResultsOffline")){
+                    else if(calledFrom.equals("searchResultsOffline")){
                         handleAddFoodOffline(fItem);
                     }
-                    else if(context.equals("mainPage")){
+                    else if(calledFrom.equals("mainPage")){
                         handleEditFood(fItem);
                     }
                 }
@@ -155,22 +157,32 @@ public class FoodItemActivity extends AppCompatActivity{
 
             @Override
             public void afterTextChanged(Editable s) {
-                if(numServings.getText().toString().length() > 0){
-                    try{
+                if(numServings.getText().toString().length() > 0) {
+                    try {
                         double servings = Double.parseDouble(numServings.getText().toString());
-                        fatAmountText.setText(String.format("%.1f", (fItem.getFatPerServing() * servings)));
-                        proteinAmountText.setText(String.format("%.1f", (fItem.getProteinPerServing() * servings)));
-                        carbAmountText.setText(String.format("%.1f",(fItem.getCarbsPerServing() * servings)));
-                        double totalFat = fItem.getFatPerServing() * servings;
-                        double totalCarbs = fItem.getCarbsPerServing() * servings;
-                        double totalProtein = fItem.getProteinPerServing() * servings;
-                        Log.e("Num servings ", "" + servings);
-                        totalCals.setText(getCalories(totalFat, totalCarbs, totalProtein) + "");
-                    }
-                    catch(NumberFormatException e){
+                        if(servings == 0 && calledFrom.equals("mainPage")){
+                            fatAmountText.setText("0");
+                            proteinAmountText.setText("0");
+                            carbAmountText.setText("0");
+                            totalCals.setText("0");
+                            submitfoodButton.setText("Remove Food");
+                        }
+                        else {
+                            if(calledFrom.equals("mainPage")){
+                                submitfoodButton.setText("Edit Food");
+                            }
+                            fatAmountText.setText(String.format("%.1f", (fItem.getFatPerServing() * servings)));
+                            proteinAmountText.setText(String.format("%.1f", (fItem.getProteinPerServing() * servings)));
+                            carbAmountText.setText(String.format("%.1f", (fItem.getCarbsPerServing() * servings)));
+                            double totalFat = fItem.getFatPerServing() * servings;
+                            double totalCarbs = fItem.getCarbsPerServing() * servings;
+                            double totalProtein = fItem.getProteinPerServing() * servings;
+                            Log.e("Num servings ", "" + servings);
+                            totalCals.setText(getCalories(totalFat, totalCarbs, totalProtein) + "");
+                        }
+                    } catch (NumberFormatException e) {
                         e.printStackTrace();
                     }
-
                 }
             }
         });
@@ -212,6 +224,7 @@ public class FoodItemActivity extends AppCompatActivity{
                     else{
                         Toast.makeText(FoodItemActivity.this, "Failed to add food to diary", Toast.LENGTH_SHORT).show();
                     }
+                    submitfoodButton.setClickable(true);
 
                 } catch (JSONException e) {
                     Log.e("in onResponse catch","in catch");
@@ -263,18 +276,16 @@ public class FoodItemActivity extends AppCompatActivity{
             @Override
             public void onResponse(JSONObject response) {
                 try {
-                    Log.e(response.toString(), "<----UPDATE RESPONSE");
                     boolean requestOutcome = response.getBoolean("success");
                     Log.e(requestOutcome + " food outcome", "outcome here");
 
                     if(requestOutcome){
-                        Log.e("FOOD UPDATED", "FOOD UPDATED");
                         Toast.makeText(FoodItemActivity.this, "Food Updated", Toast.LENGTH_SHORT).show();
                         pullUpdatesToLocalDB();
                     }
                     else{
                         Toast.makeText(FoodItemActivity.this, "Failed to update food", Toast.LENGTH_SHORT).show();
-                    }
+                    }submitfoodButton.setClickable(true);
 
                 } catch (JSONException e) {
                     Toast.makeText(FoodItemActivity.this, "Failed to update food", Toast.LENGTH_SHORT).show();
@@ -339,8 +350,14 @@ public class FoodItemActivity extends AppCompatActivity{
         submitfoodButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(Double.parseDouble(numServings.getText().toString()) > 0){
-                    addDailyFood(fItemCopy);
+                try {
+                    if (Double.parseDouble(numServings.getText().toString()) > 0) {
+                        submitfoodButton.setClickable(false);
+                        addDailyFood(fItemCopy);
+                    }
+                }
+                catch(NumberFormatException | NullPointerException e){
+                    submitfoodButton.setClickable(true);
                 }
             }
         });
@@ -355,8 +372,14 @@ public class FoodItemActivity extends AppCompatActivity{
         submitfoodButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(Double.parseDouble(numServings.getText().toString()) > 0){
-                    addDailyFoodOffline(fItemCopy);
+                try {
+                    if (Double.parseDouble(numServings.getText().toString()) > 0) {
+                        submitfoodButton.setClickable(false);
+                        addDailyFoodOffline(fItemCopy);
+                    }
+                }
+                catch (NumberFormatException | NullPointerException e){
+                    submitfoodButton.setClickable(true);
                 }
             }
         });
@@ -371,8 +394,17 @@ public class FoodItemActivity extends AppCompatActivity{
         submitfoodButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(Double.parseDouble(numServings.getText().toString()) > 0){
-                    updateDailyFood(fItemCopy);
+                try {
+                    if (Double.parseDouble(numServings.getText().toString()) > 0) {
+                        submitfoodButton.setClickable(false);
+                        updateDailyFood(fItemCopy);
+                    } else if (Double.parseDouble(numServings.getText().toString()) == 0) {
+                        submitfoodButton.setClickable(false);
+                        removeDailyFood(fItemCopy);
+                    }
+                }
+                catch(NumberFormatException | NullPointerException e){
+                    submitfoodButton.setClickable(true);
                 }
             }
         });
@@ -397,7 +429,8 @@ public class FoodItemActivity extends AppCompatActivity{
                 "VALUES(" + null + "," + dailyFoodRemoteID + "," +userID + ", \"" + name + "\", \"" + description + "\", " + servingSize + ", " + numServings + ", " + calsPerServing + ", " +
                 proteinPerServing + ", " + fatPerServing + ", " + carbPerServing + ");");
 
-        Toast.makeText(this, "Updating local database. ", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Food added. ", Toast.LENGTH_LONG).show();
+        submitfoodButton.setClickable(true);
 
         Intent updateRemoteDBIntent = new Intent(this, DataSenderService.class);
 
@@ -416,6 +449,67 @@ public class FoodItemActivity extends AppCompatActivity{
 
         manager.setRepeating(AlarmManager.RTC, cal.getTimeInMillis(), 10*1000, pendingIntent);
 
+    }
+
+    private void removeDailyFood(FoodItem foodItem){
+        Toast.makeText(this, "Deleting Food", Toast.LENGTH_SHORT).show();
+
+
+        SessionManager manager = SessionManager.getInstance(this);
+        String userID = manager.getUserID();
+        double numServingsNumeric = Double.parseDouble(this.numServings.getText().toString());
+
+        Log.e("FOOD ITEM ON ADD", foodItem.toString() + "");
+
+        Map<String,String> params = new HashMap<String,String>();
+        params.put("foodID", foodItem.getDailyFoodGlobalID() + "");
+        params.put("userID", userID);
+
+
+        Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    Log.e(response.toString(), "<----REMOVE RESPONSE");
+                    boolean requestOutcome = response.getBoolean("success");
+
+                    if(requestOutcome){
+                        Toast.makeText(FoodItemActivity.this, "Food Deleted", Toast.LENGTH_SHORT).show();
+                        pullUpdatesToLocalDB();
+                    }
+                    else{
+                        Toast.makeText(FoodItemActivity.this, "Failed to update food", Toast.LENGTH_SHORT).show();
+                    }
+                    submitfoodButton.setClickable(true);
+
+                } catch (JSONException e) {
+                    Toast.makeText(FoodItemActivity.this, "Failed to update food", Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        Response.ErrorListener errorListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+                    Toast.makeText(FoodItemActivity.this, "no connection", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof AuthFailureError) {
+                    Toast.makeText(FoodItemActivity.this, "auth failure error", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof ServerError) {
+                    Toast.makeText(FoodItemActivity.this, "server error", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof NetworkError) {
+                    Toast.makeText(FoodItemActivity.this, "network error", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof ParseError) {
+                    Toast.makeText(FoodItemActivity.this, "parse error", Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
+
+        CustomRequest request = new CustomRequest(Request.Method.POST, REMOVE_FOOD_DESTINATION, params, listener, errorListener);
+
+        RequestQueueHelper helper = RequestQueueHelper.getInstance();
+        helper.add(request);
     }
 
 }

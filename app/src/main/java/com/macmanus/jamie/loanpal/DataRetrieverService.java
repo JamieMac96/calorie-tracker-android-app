@@ -2,6 +2,7 @@ package com.macmanus.jamie.loanpal;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -55,7 +56,7 @@ public class DataRetrieverService extends IntentService {
     //then the data in the local database becomes the data we use.
     //If it it becomes a new day then we want to update the local database from the remote database.
     //To do this we check the systemDate against the actual date.
-    public static String SYSTEM_DATE;
+    private SharedPreferences prefs;
 
 
 
@@ -183,7 +184,6 @@ public class DataRetrieverService extends IntentService {
                 boolean requestOutcome = false;
                 try {
                     requestOutcome = response.getBoolean("success");
-                    Log.e(requestOutcome + " progress outcome", "outcome here");
                     if (requestOutcome) {
                         MyDatabaseHandler dbHandler = MyDatabaseHandler.getInstance(getApplicationContext());
 
@@ -297,8 +297,13 @@ public class DataRetrieverService extends IntentService {
     }
 
     public void retrieveDailyFoods(final int userID, final String message){
+        prefs = getApplicationContext().getSharedPreferences("CalorieTrackerPref", 0);
+        SharedPreferences.Editor sharedPrefsEditor = prefs.edit();
+
+        //when we update the daily foods we update our prefs sharedpreference
         Date date = new Date();
-        SYSTEM_DATE = new SimpleDateFormat("yyyy-MM-dd").format(date);
+        sharedPrefsEditor.putString("systemDate", new SimpleDateFormat("yyyy-MM-dd").format(date));
+        sharedPrefsEditor.commit();
 
 
         Map<String,String> params = new HashMap<String,String>();
@@ -315,7 +320,6 @@ public class DataRetrieverService extends IntentService {
 
                     if(requestOutcome){
                         if(response.has("result")) {
-                            Log.e(response.getString("result"),"<--------DATA BACK daily");
                             JSONArray result = response.getJSONArray("result");
                             for (int i = 0; i < result.length(); i++) {
                                 JSONArray innerArray = result.getJSONArray(i);

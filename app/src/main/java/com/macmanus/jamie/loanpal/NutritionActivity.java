@@ -65,7 +65,7 @@ public class NutritionActivity extends AppCompatActivity {
         GraphicalView graphicalView = nutritionPie.getGraphicalView(this, (int)(proteinGrams * 4), (int)(carbGrams * 4), (int)(fatGrams * 4));
 
         LinearLayout pieGraph = (LinearLayout) findViewById(R.id.pie_chart);
-// pieGraph is just a regular LinearLayout you need to create in .xml file
+        // pieGraph is just a regular LinearLayout you need to create in .xml file
 
         pieGraph.addView(graphicalView);
 
@@ -87,9 +87,6 @@ public class NutritionActivity extends AppCompatActivity {
         for(int i = 1; i < dailyFoodsDB.size(); i++){
             String [] rowSplit = dailyFoodsDB.get(i).split(",");
             double numServings = Double.parseDouble(rowSplit[6]);
-            Log.e(rowSplit[8], "<--protein");
-            Log.e(rowSplit[9], "<--carbs");
-            Log.e(rowSplit[10], "<--fat");
             proteinGrams += Double.parseDouble(rowSplit[8]) * numServings;
             fatGrams += Double.parseDouble(rowSplit[9]) * numServings;
             carbGrams += Double.parseDouble(rowSplit[10]) * numServings;
@@ -97,7 +94,7 @@ public class NutritionActivity extends AppCompatActivity {
 
         String fatGramsString = String.format("%.1f", fatGrams);
         String proteinGramsString = String.format("%.1f", proteinGrams);
-        String carbGramsString = String.format("%.1f", proteinGrams);
+        String carbGramsString = String.format("%.1f", carbGrams);
 
         fatText.append(fatGramsString + "g");
         proteinText.append(proteinGramsString+ "g");

@@ -2,7 +2,6 @@
 <LinearLayout android:paddingTop="10dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/mainpage_background"
     android:padding="10dp"
     android:weightSum="100"
     xmlns:android="http://schemas.android.com/apk/res/android"

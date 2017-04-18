@@ -77,13 +77,22 @@ public class MainActivity extends AppCompatActivity {
         SessionManager manager = SessionManager.getInstance(getApplicationContext());
         manager.checkLogin();
 
+        //Each day we want to start the food diary over again and remove any food from the local database that is not todays and load the new stuff if there is any.
+        //to do this we check sharedpreference that we created in the dataretrieverservice and if there is a disparity between the current date and the date of the last
+        //update then we update the local database
         Date date = new Date();
+        String systemDate;
         String currentDate= new SimpleDateFormat("yyyy-MM-dd").format(date);
-
-        //If it is a new day we want to get the data for the new day.
-        if((!currentDate.equals(DataRetrieverService.SYSTEM_DATE)) && (DataRetrieverService.SYSTEM_DATE != null)){
+        try {
+            systemDate = getSharedPreferences("CalorieTrackerPref", 0).getString("systemDate", null);
+        }
+        catch(NullPointerException e){
+            systemDate = null;
+        }
+        if((!currentDate.equals(systemDate)) && (systemDate != null)){
             pullUpdatesToLocalDB();
         }
+
 
         getTodaysFoods();
 
@@ -104,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
         //get calorie goal from UserDetails table and set the corresponding element
         Cursor userDetailsTable = MyDatabaseHandler.getInstance(this).getReadableDatabase().rawQuery("SELECT * FROM " + MyDatabaseHandler.USER_DETAILS_TABLE_NAME, null);
         if(userDetailsTable.moveToNext()) {
-            Log.e(userDetailsTable.getString(6), "String at location 6");
             String goalCalories = userDetailsTable.getString(6);
             goalCaloriesTop.setText(goalCalories);
 

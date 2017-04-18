@@ -5,17 +5,16 @@
     android:gravity="center_horizontal"
     android:orientation="vertical"
     tools:context="com.macmanus.jamie.loanpal.LoginActivity"
-    android:background="@color/bodyColor">
+    android:background="@color/colorPrimaryLighter">
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="75dp"
+        android:layout_height="56dp"
         android:background="@color/headerColor"
         android:text="@string/sign_up2"
         android:textColor="@color/white"
         android:gravity="center"
         android:textSize="30sp"
-        android:fontFamily="serif"
         />
 
     <!-- Login progress -->
@@ -23,7 +22,7 @@
         android:id="@+id/login_progress"
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="56dp"
         android:layout_marginBottom="8dp"
         android:visibility="gone" />
 
@@ -56,7 +55,7 @@
                     android:inputType="textEmailAddress"
                     android:maxLines="1"
                     android:maxLength="200"
-                    android:background="@drawable/input_background"
+                    android:background="@color/white"
                     android:textCursorDrawable="@null"
                     />
 
@@ -76,7 +75,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
                     android:paddingLeft="@dimen/hint_spacing"
-                    android:background="@drawable/input_background"
+                    android:background="@color/white"
                     android:hint="@string/prompt_password"
                     android:imeActionId="@+id/login"
                     android:inputType="textPassword"
@@ -102,7 +101,7 @@
                     android:layout_height="45dp"
                     android:paddingStart="@dimen/hint_spacing"
                     android:paddingLeft="@dimen/hint_spacing"
-                    android:background="@drawable/input_background"
+                    android:background="@color/white"
                     android:hint="@string/prompt_password_confirm"
                     android:maxLength="200"
                     android:imeActionId="@+id/login"
@@ -115,16 +114,17 @@
 
             <Button
                 android:id="@+id/sign_up_button"
-                style="?android:textAppearanceSmall"
-                android:background="@drawable/button_background"
+                style="@style/Widget.AppCompat.Button.Colored"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorAccent"
+                android:background="@color/colorAccent"
                 android:layout_marginTop="31dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:textSize="20sp"
                 android:text="@string/sign_up2"
-                android:fontFamily="serif"
+                android:textColor="@color/white"
                 android:layout_weight="1"
                 android:onClick="registerUser"
                 />

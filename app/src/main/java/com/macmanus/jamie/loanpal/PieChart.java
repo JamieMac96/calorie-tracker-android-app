@@ -21,11 +21,24 @@ public class PieChart {
         // create an instance of the pie chart category series
         CategorySeries series = new CategorySeries("Nutrition Pie");
 
+        double proteinPercentage = 0;
+        double carbPercentage = 0;
+        double fatPercentage = 0;
+        boolean noEntriesFalg = false;
 
         int total = protein + carbs + fat;
-        double proteinPercentage = (((double)protein) / ((double)total) * 100);
-        double carbPercentage = (((double)carbs) / ((double)total) * 100);
-        double fatPercentage = (((double)fat) / ((double)total) * 100);
+        if(total != 0) {
+            proteinPercentage = (((double) protein) / ((double) total) * 100);
+            carbPercentage = (((double) carbs) / ((double) total) * 100);
+            fatPercentage = (((double) fat) / ((double) total) * 100);
+        }
+        else{
+            noEntriesFalg = true;
+        }
+
+        Log.e("carbs %", "" + carbPercentage);
+        Log.e("fat%", "" + fatPercentage);
+        Log.e("protein %", "" + proteinPercentage);
 
         String pPercentAsString = String.format("%.1f", proteinPercentage);
         String cPercentAsString = String.format("%.1f", carbPercentage);
@@ -34,6 +47,12 @@ public class PieChart {
 
         // create arrays for name and size of pie chart slides
         int[] portions = {protein, carbs, fat};
+        if(noEntriesFalg){
+            portions[0] = 1;
+            portions[1] = 1;
+            portions[2] = 1;
+        }
+
         String[] seriesNames = new String[]{"Protein: " + pPercentAsString + "%", "Carbs: "+ cPercentAsString + "%", "Fat: " + fPercentAsString + "%"};
 
         // assign names and sizes to the pie chart

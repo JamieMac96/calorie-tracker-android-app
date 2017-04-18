@@ -6,7 +6,7 @@
     android:gravity="center_horizontal"
     android:orientation="vertical"
     tools:context="com.macmanus.jamie.loanpal.LoginActivity"
-    android:background="@color/bodyColor">
+    android:background="@color/colorPrimaryLighter">
 
     <!-- Login progress -->
     <TextView
@@ -56,8 +56,8 @@
                     android:paddingStart="@dimen/hint_spacing"
                     android:paddingLeft="@dimen/hint_spacing"
                     android:inputType="textEmailAddress"
+                    android:background="@color/white"
                     android:maxLines="1"
-                    android:background="@drawable/input_background"
                     android:textCursorDrawable="@null"
                     />
 
@@ -77,7 +77,7 @@
                     android:layout_height="45dp"
                     android:paddingStart="@dimen/hint_spacing"
                     android:paddingLeft="@dimen/hint_spacing"
-                    android:background="@drawable/input_background"
+                    android:background="@color/white"
                     android:hint="@string/prompt_password"
                     android:inputType="textPassword"
                     android:maxLines="1"
@@ -88,9 +88,10 @@
 
 
             <Button
-                android:id="@+id/email_sign_in_button"
-                style="?android:textAppearanceSmall"
-                android:background="@drawable/button_background"
+                android:background="@color/colorAccent"
+                android:id="@+id/sign_in_button"
+                android:backgroundTint="@color/colorAccent"
+                android:textColor="@color/white"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="56dp"
@@ -98,15 +99,15 @@
                 android:layout_marginRight="20dp"
                 android:textSize="20sp"
                 android:text="LOGIN"
-                android:fontFamily="serif"
                 android:layout_weight="1"
                 android:onClick="attemptLogin"
                 />
 
             <Button
+                android:background="@color/colorAccent"
                 android:id="@+id/email_sign_up_button"
-                style="?android:textAppearanceSmall"
-                android:background="@drawable/button_background"
+                android:backgroundTint="@color/colorAccent"
+               android:textColor="@color/white"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="56dp"
@@ -114,7 +115,6 @@
                 android:layout_marginRight="20dp"
                 android:textSize="20sp"
                 android:text="@string/sign_up"
-                android:fontFamily="serif"
                 android:layout_weight="1"
                 android:onClick="startSignUpActivity"
                 />

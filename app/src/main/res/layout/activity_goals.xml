@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView android:layout_height="match_parent"
     android:layout_width="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@color/colorPrimaryLighter">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical" android:layout_width="match_parent"
@@ -12,7 +13,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_margin="5dp"
+            android:layout_marginTop="0dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -43,7 +46,8 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -60,19 +64,21 @@
 
             <EditText
                 android:id="@+id/current_bodyweight"
-                android:layout_width="60dp"
+                android:layout_width="88dp"
                 android:layout_height="match_parent"
                 android:layout_marginEnd="10dp"
                 android:layout_marginRight="10dp"
                 android:inputType="number"
                 android:text=""
+                android:background="@color/white"
                 />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -89,12 +95,13 @@
 
             <EditText
                 android:id="@+id/goal_bodyweight"
-                android:layout_width="60dp"
+                android:layout_width="88dp"
                 android:layout_height="match_parent"
                 android:layout_marginEnd="10dp"
                 android:layout_marginRight="10dp"
                 android:inputType="number"
                 android:text=""
+                android:background="@color/white"
                 />
 
 
@@ -102,7 +109,8 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -112,12 +120,17 @@
                 android:textColor="@color/black"
 
                 />
+            <TextView
+                android:layout_width="6dp"
+                android:layout_height="match_parent"
+                />
             <Spinner
                 android:layout_marginLeft="10dp"
                 android:id="@+id/weekly_goal"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                android:background="@color/white">
 
             </Spinner>
 
@@ -127,7 +140,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp">
+            android:layout_margin="5dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -135,13 +148,18 @@
                 android:text="Activity level"
                 android:textSize="25dp"
                 android:textColor="@color/black"
+                />
 
+            <TextView
+                android:layout_width="10dp"
+                android:layout_height="match_parent"
                 />
             <Spinner
                 android:id="@+id/activity_level"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_weight="1">
+                android:layout_weight="0.97"
+                android:background="@color/white">
 
             </Spinner>
 
@@ -151,7 +169,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp">
+            android:layout_margin="5dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -167,13 +185,14 @@
                 />
 
             <EditText
-                android:layout_width="60dp"
+                android:layout_width="88dp"
                 android:layout_height="match_parent"
                 android:layout_marginEnd="10dp"
                 android:layout_marginRight="10dp"
                 android:inputType="number"
                 android:text="2000"
                 android:id="@+id/calorie_goal"
+                android:background="@color/white"
                 />
 
         </LinearLayout>
@@ -181,8 +200,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="8dp">
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="match_parent"
@@ -190,13 +208,14 @@
                 android:text="Macronutrient Goals: "
                 android:textSize="25dp"
                 android:id="@+id/macronutrient_goals"
-                android:textColor="@color/black"/>
+                android:textColor="@color/black"
+                android:layout_margin="5dp"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
-                android:layout_marginTop="8dp">
+                android:layout_margin="5dp">
 
                 <TextView
                     android:layout_marginLeft="120dp"
@@ -212,7 +231,8 @@
                 <Spinner
                     android:id="@+id/fat_dropdown"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:background="@color/white">
 
                 </Spinner>
             </LinearLayout>
@@ -221,7 +241,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
-                android:layout_marginTop="8dp">
+                android:layout_margin="5dp">
 
                 <TextView
                     android:layout_marginLeft="120dp"
@@ -239,7 +259,8 @@
                 <Spinner
                     android:id="@+id/carbs_dropdown"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:background="@color/white">
 
                 </Spinner>
 
@@ -250,7 +271,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
-                android:layout_marginTop="8dp">
+                android:layout_margin="5dp">
 
                 <TextView
                     android:layout_marginLeft="120dp"
@@ -262,7 +283,8 @@
                 <Spinner
                     android:id="@+id/protein_dropdown"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:background="@color/white">
 
                 </Spinner>
 
@@ -275,11 +297,14 @@
 
         <Button
             android:id="@+id/submit_button"
-            android:layout_marginTop="8dp"
+            android:layout_margin="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="submit"
-            android:onClick="attemptUpdateGoals"/>
+            android:onClick="attemptUpdateGoals"
+            android:background="@color/colorAccent"
+            android:textSize="20sp"
+            android:textColor="@color/white"/>
 
     </LinearLayout>
 </ScrollView>

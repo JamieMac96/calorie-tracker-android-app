@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,6 +52,7 @@ public class LoginActivity extends AppCompatActivity {
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
     private MyResponseReceiver receiver;
+    private Button loginButton;
     //private final String REQUEST_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/login.php";
     private final String REQUEST_DESTINATION = "http://34.251.31.162/login.php";
 
@@ -69,7 +71,7 @@ public class LoginActivity extends AppCompatActivity {
 
         mPasswordView = (EditText) findViewById(R.id.password);
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
-
+        loginButton = (Button) findViewById(R.id.sign_in_button);
 
 
         IntentFilter filter = new IntentFilter(MyResponseReceiver.ACTION_RESP);
@@ -101,6 +103,7 @@ public class LoginActivity extends AppCompatActivity {
         String password = mPasswordView.getText().toString();
 
         if (isEmailValid(email) && isPasswordValid(password)) {
+            loginButton.setClickable(false);
             Log.e("valid details", "Details valid");
             loginUser(email, password);
         }
@@ -121,7 +124,6 @@ public class LoginActivity extends AppCompatActivity {
                 try {
                     attemptLoginToast.cancel();
                     boolean requestOutcome = response.getBoolean("success");
-                    Log.e(requestOutcome + ": outcome", "outcome here");
 
                     if(requestOutcome){
                         String userID = response.getString("UserID");
@@ -135,9 +137,9 @@ public class LoginActivity extends AppCompatActivity {
                     }
 
                 } catch (JSONException e) {
-                    Log.e("in onResponse catch","in catch");
                     e.printStackTrace();
                 }
+                loginButton.setClickable(true);
             }
         };
 
@@ -233,8 +235,6 @@ public class LoginActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             String text = intent.getStringExtra(DataRetrieverService.PARAM_OUT_MSG);
 
-            Log.e("IN RECEIVER", "IN RECEIVER");
-
             switch (text) {
                 case USER_DETAILS_MESSAGE:
                     retrievedUserDetails = true;
@@ -261,6 +261,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
     private void goToMainActivity(){
+        Log.e("GO TO MAIN", "GO TO MAIN");
         try {
             if (receiver!=null){
                 unregisterReceiver(receiver);
@@ -269,7 +270,9 @@ public class LoginActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         Intent mainActivity = new Intent(this, MainActivity.class);
+        mainActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mainActivity);
+        finish();
     }
 }
 

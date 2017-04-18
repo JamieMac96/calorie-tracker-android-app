@@ -79,7 +79,6 @@ public class AddFoodActivity extends Activity {
 
         @Override
         protected void onPreExecute(){
-            Log.e("pre execute ", "pre execute");
             super.onPreExecute();
         }
         //make synchronous volley request to get users bodyweight entries.
@@ -88,7 +87,6 @@ public class AddFoodActivity extends Activity {
 
             Map<String, String> requestParams = new HashMap<String, String>();
             requestParams.put("searchQuery", searchQuery);
-            Log.e("searchQuery: ", searchQuery + "");
 
             //create synchronous request
             RequestFuture<JSONObject> future = RequestFuture.newFuture();
@@ -168,7 +166,6 @@ public class AddFoodActivity extends Activity {
         speechButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("SPEECH ONCLICK","SPEECH ONCLICK");
                 promptSpeechInput();
             }
         });
@@ -180,7 +177,6 @@ public class AddFoodActivity extends Activity {
         i.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
         i.putExtra(RecognizerIntent.EXTRA_PROMPT, "Say Something");
         try {
-            Log.e("IN TRY FOR SPEECH", "IN TRY FOR SPEECH");
             startActivityForResult(i, 100);
         }
         catch(ActivityNotFoundException e){
@@ -190,13 +186,8 @@ public class AddFoodActivity extends Activity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent i){
-        Log.e("HERE NOW1", "HERE NOW1");
         super.onActivityResult(requestCode, resultCode, i);
 
-        Log.e("HERE NOW", "HERE NOW");
-
-        Log.e("REQUEST CODE  ", requestCode + "");
-        Log.e("REsult CODE", resultCode + "  <");
         Log.e("REsult CODE==RESULT_OK", (resultCode == RESULT_OK) + "");
         Log.e("i==null  ", (i==null) + "");
 
@@ -258,7 +249,6 @@ public class AddFoodActivity extends Activity {
 
         //now we apply  the filter
         for(int i = 0; i < filteredUserFoods.size(); i++){
-            Log.e(filteredUserFoods.get(i).toString(),"<-----ROW");
             if(! filteredUserFoods.get(i).getTitle().toLowerCase().contains(searchQuery.toLowerCase())){
                 filteredUserFoods.remove(i);
                 i--;
