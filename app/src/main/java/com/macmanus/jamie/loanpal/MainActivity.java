@@ -24,6 +24,7 @@ import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -256,25 +257,31 @@ public class MainActivity extends AppCompatActivity {
 
         List<String> tableString = myDB.getTableInfoAsString(MyDatabaseHandler.USER_DETAILS_TABLE_NAME);
 
-        String [] rowSplit = tableString.get(1).split(",");
-        String calorieGoal = rowSplit[6];
-        String proteinGoalPercent = rowSplit[7];
-        String carbGoalPercent = rowSplit[8];
-        String fatGoalPercent = rowSplit[9];
+        if(tableString.size() > 0) {
+            String [] rowSplit = tableString.get(1).split(",");
 
-        double calorieGoalDouble = Double.parseDouble(calorieGoal);
-        double caloriesFromProtein = (Integer.parseInt(proteinGoalPercent) * calorieGoalDouble) / 100;
-        double caloriesFromFat = (Integer.parseInt(fatGoalPercent) * calorieGoalDouble) / 100;
-        double caloriesFromCarb = (Integer.parseInt(carbGoalPercent) * calorieGoalDouble) / 100;
+            String calorieGoal = rowSplit[6];
+            String proteinGoalPercent = rowSplit[7];
+            String carbGoalPercent = rowSplit[8];
+            String fatGoalPercent = rowSplit[9];
 
-        int goalProtien = (int)caloriesFromProtein / 4;
-        int goalCarbs = (int) caloriesFromCarb / 4;
-        int  goalFat = (int) caloriesFromFat / 9;
+            double calorieGoalDouble = Double.parseDouble(calorieGoal);
+            double caloriesFromProtein = (Integer.parseInt(proteinGoalPercent) * calorieGoalDouble) / 100;
+            double caloriesFromFat = (Integer.parseInt(fatGoalPercent) * calorieGoalDouble) / 100;
+            double caloriesFromCarb = (Integer.parseInt(carbGoalPercent) * calorieGoalDouble) / 100;
 
-        fatGoal.setText(goalFat + "");
-        proteinGoal.setText(goalProtien + "");
-        carbGoal.setText(goalCarbs + "");
-        caloriesGoal.setText(calorieGoal);
+            int goalProtien = (int) caloriesFromProtein / 4;
+            int goalCarbs = (int) caloriesFromCarb / 4;
+            int goalFat = (int) caloriesFromFat / 9;
+
+            fatGoal.setText(goalFat + "");
+            proteinGoal.setText(goalProtien + "");
+            carbGoal.setText(goalCarbs + "");
+            caloriesGoal.setText(calorieGoal);
+        }
+        else{
+            Toast.makeText(this, "Set your goals utilize all the app's features", Toast.LENGTH_SHORT).show();
+        }
 
     }
 
