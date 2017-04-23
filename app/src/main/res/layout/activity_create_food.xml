@@ -93,7 +93,7 @@
         android:background="@color/colorAccent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="submit"
+        android:text="SUBMIT"
         android:padding="10dp"
         android:onClick="submitFood"
         android:layout_margin="10dp"

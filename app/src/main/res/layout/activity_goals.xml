@@ -69,6 +69,7 @@
                 android:layout_marginEnd="10dp"
                 android:layout_marginRight="10dp"
                 android:inputType="number"
+                android:maxLength="3"
                 android:text=""
                 android:background="@color/white"
                 />
@@ -101,6 +102,7 @@
                 android:layout_marginRight="10dp"
                 android:inputType="number"
                 android:text=""
+                android:maxLength="3"
                 android:background="@color/white"
                 />
 
@@ -191,6 +193,7 @@
                 android:layout_marginRight="10dp"
                 android:inputType="number"
                 android:text="2000"
+                android:maxLength="5"
                 android:id="@+id/calorie_goal"
                 android:background="@color/white"
                 />
@@ -296,11 +299,11 @@
 
 
         <Button
-            android:id="@+id/submit_button"
+            android:id="@+id/goals_submit_button"
             android:layout_margin="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="submit"
+            android:text="SUBMIT"
             android:onClick="attemptUpdateGoals"
             android:background="@color/colorAccent"
             android:textSize="20sp"

@@ -180,6 +180,61 @@
         android:id="@+id/home_food_item_list"
         android:layout_weight="1"/>
 
+        <LinearLayout android:paddingTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/mainpage_background"
+            android:padding="10dp"
+            android:weightSum="100"
+            android:id="@+id/nutrition_goals_row">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="20"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:id="@+id/goals_name"
+                android:text="Goals"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="20"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:id="@+id/goal_fat"
+                android:text="" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="20"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:id="@+id/goal_carbs"
+                android:text=""
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="20"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:id="@+id/goal_protein"
+                android:text="" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="20"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:id="@+id/goal_cals"
+                android:text="" />
+        </LinearLayout>
+
     <LinearLayout android:paddingTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

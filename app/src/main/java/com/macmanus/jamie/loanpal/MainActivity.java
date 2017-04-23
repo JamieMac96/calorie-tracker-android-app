@@ -44,6 +44,11 @@ public class MainActivity extends AppCompatActivity {
     private TextView carbTotal;
     private TextView caloriesTotal;
 
+    private TextView fatGoal;
+    private TextView proteinGoal;
+    private TextView carbGoal;
+    private TextView caloriesGoal;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +70,11 @@ public class MainActivity extends AppCompatActivity {
         proteinTotal = (TextView) findViewById(R.id.total_protein);
         carbTotal = (TextView) findViewById(R.id.total_carbs);
         caloriesTotal = (TextView) findViewById(R.id.total_cals);
+
+        fatGoal = (TextView) findViewById(R.id.goal_fat);
+        proteinGoal = (TextView) findViewById(R.id.goal_protein);
+        carbGoal = (TextView) findViewById(R.id.goal_carbs);
+        caloriesGoal = (TextView) findViewById(R.id.goal_cals);
 
     }
 
@@ -100,32 +110,9 @@ public class MainActivity extends AppCompatActivity {
 
         setNutritionTotals();
 
+        setNutritionalGoals();
+
         setNutritionTopBar();
-
-        //if we update any foods that are displayed we also want to update the header of the main page
-        TextView goalCaloriesTop = (TextView) findViewById(R.id.calorie_goal_top);
-        TextView consumedCaloriesTop = (TextView) findViewById(R.id.calories_consumed_top);
-        TextView netCaloriesTop = (TextView) findViewById(R.id.net_calories_top);
-
-        //set consumed calories
-        consumedCaloriesTop.setText(caloriesTotal.getText().toString());
-
-        //get calorie goal from UserDetails table and set the corresponding element
-        Cursor userDetailsTable = MyDatabaseHandler.getInstance(this).getReadableDatabase().rawQuery("SELECT * FROM " + MyDatabaseHandler.USER_DETAILS_TABLE_NAME, null);
-        if(userDetailsTable.moveToNext()) {
-            String goalCalories = userDetailsTable.getString(6);
-            goalCaloriesTop.setText(goalCalories);
-
-            //calculate the net calories
-            String netCalories = String.format("%.1f", (Double.parseDouble(goalCalories) - Double.parseDouble(caloriesTotal.getText().toString())));
-            netCaloriesTop.setText(netCalories);
-            if(Double.parseDouble(netCalories) < 0){
-                netCaloriesTop.setTextColor(ContextCompat.getColor(this, R.color.myRed));
-            }
-            else{
-                netCaloriesTop.setTextColor(ContextCompat.getColor(this, R.color.green));
-            }
-        }
 
     }
 
@@ -264,42 +251,65 @@ public class MainActivity extends AppCompatActivity {
         caloriesTotal.setText(calString);
     }
 
+    private void setNutritionalGoals(){
+        MyDatabaseHandler myDB = MyDatabaseHandler.getInstance(this);
 
-    private void setNutritionTopBar(){
+        List<String> tableString = myDB.getTableInfoAsString(MyDatabaseHandler.USER_DETAILS_TABLE_NAME);
+
+        String [] rowSplit = tableString.get(1).split(",");
+        String calorieGoal = rowSplit[6];
+        String proteinGoalPercent = rowSplit[7];
+        String carbGoalPercent = rowSplit[8];
+        String fatGoalPercent = rowSplit[9];
+
+        double calorieGoalDouble = Double.parseDouble(calorieGoal);
+        double caloriesFromProtein = (Integer.parseInt(proteinGoalPercent) * calorieGoalDouble) / 100;
+        double caloriesFromFat = (Integer.parseInt(fatGoalPercent) * calorieGoalDouble) / 100;
+        double caloriesFromCarb = (Integer.parseInt(carbGoalPercent) * calorieGoalDouble) / 100;
+
+        int goalProtien = (int)caloriesFromProtein / 4;
+        int goalCarbs = (int) caloriesFromCarb / 4;
+        int  goalFat = (int) caloriesFromFat / 9;
+
+        fatGoal.setText(goalFat + "");
+        proteinGoal.setText(goalProtien + "");
+        carbGoal.setText(goalCarbs + "");
+        caloriesGoal.setText(calorieGoal);
 
     }
 
-    private void pullUpdatesToLocalDB(){
-        SessionManager manager = SessionManager.getInstance(this);
-        String userID = manager.getUserID();
 
+    private void setNutritionTopBar(){
+        //if we update any foods that are displayed we also want to update the header of the main page
+        TextView goalCaloriesTop = (TextView) findViewById(R.id.calorie_goal_top);
+        TextView consumedCaloriesTop = (TextView) findViewById(R.id.calories_consumed_top);
+        TextView netCaloriesTop = (TextView) findViewById(R.id.net_calories_top);
 
-        //If we are not connected to a network then we will not be able to read from the remote database and thus we
-        //won't be able to update the local database.
-        //
-        //By doing this check we will prevent the eventuality where we delete the local database entries and then fail to
-        //pull the updated entries from the remote database.
-        //
-        //In an ideal scenario we would create a new service class for updating the local database but since time is a constraint
-        //here we simply overwrite the local database rather than update it (and reuse our already implemented class).
-        ConnectivityManager cm = (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
-        if(isConnected){
-            //before we can insert the local database with the updated values we must clear the pertinent DB tables
-            MyDatabaseHandler.getInstance(this).getWritableDatabase().execSQL("DELETE FROM UserFood");
-            MyDatabaseHandler.getInstance(this).getWritableDatabase().execSQL("DELETE FROM DailyFood");
+        //set consumed calories
+        consumedCaloriesTop.setText(caloriesTotal.getText().toString());
 
-            //Now we call the DataRetrieverService to update the local database
-            Intent userFoodsIntent = new Intent(this, DataRetrieverService.class);
-            userFoodsIntent.putExtra(DataRetrieverService.PARAM_IN_MSG, "update-user-foods");
-            userFoodsIntent.putExtra(DataRetrieverService.USER_ID_MSG, userID);
-            startService(userFoodsIntent);
+        //get calorie goal from UserDetails table and set the corresponding element
+        Cursor userDetailsTable = MyDatabaseHandler.getInstance(this).getReadableDatabase().rawQuery("SELECT * FROM " + MyDatabaseHandler.USER_DETAILS_TABLE_NAME, null);
+        if(userDetailsTable.moveToNext()) {
+            String goalCalories = userDetailsTable.getString(6);
+            goalCaloriesTop.setText(goalCalories);
 
-            Intent dailyFoodsIntent = new Intent(this, DataRetrieverService.class);
-            dailyFoodsIntent.putExtra(DataRetrieverService.PARAM_IN_MSG, "update-daily-foods");
-            dailyFoodsIntent.putExtra(DataRetrieverService.USER_ID_MSG, userID);
-            startService(dailyFoodsIntent);
+            //calculate the net calories
+            String netCalories = String.format("%.1f", (Double.parseDouble(goalCalories) - Double.parseDouble(caloriesTotal.getText().toString())));
+            netCaloriesTop.setText(netCalories);
+            if(Double.parseDouble(netCalories) < 0){
+                netCaloriesTop.setTextColor(ContextCompat.getColor(this, R.color.myRed));
+            }
+            else{
+                netCaloriesTop.setTextColor(ContextCompat.getColor(this, R.color.green));
+            }
         }
+    }
+
+    private void pullUpdatesToLocalDB(){
+        LocalDatabaseUpdater myUpdater = new LocalDatabaseUpdater(getApplicationContext());
+
+        myUpdater.updateUserFoods();
+        myUpdater.updateDailyFoods();
     }
 }

@@ -56,6 +56,7 @@ public class GoalsActivity extends Activity {
     private Spinner  proteinPercentage;
     private Spinner  weeklyGoalsDropdown;
     private Spinner  activityLevelDropDown;
+    private Button submitButton;
 
     private String loadedCurrentBodyWeight;
     private String loadedGoalBodyWeight;
@@ -65,8 +66,6 @@ public class GoalsActivity extends Activity {
     private String  loadedProteinPercentage;
     private String  loadedWeeklyGoalsDropdown;
     private String  loadedActivityLevelDropDown;
-
-    private Button submitButton;
     //private final String WRITE_DESTINATION = "http://10.0.2.2/calorie-tracker-app-server-scripts/update-goals.php";
 
     private final String WRITE_DESTINATION = "http://34.251.31.162/update-goals.php";
@@ -150,6 +149,7 @@ public class GoalsActivity extends Activity {
 
     public void attemptUpdateGoals(View view) {
         if(isValidUpdateForm()){
+            submitButton.setClickable(false);
             SessionManager manager = SessionManager.getInstance(getApplicationContext());
             String userID = manager.getUserID();
 
@@ -183,6 +183,7 @@ public class GoalsActivity extends Activity {
                             Toast.makeText(GoalsActivity.this, "goals updated", Toast.LENGTH_SHORT).show();
 
                             pullUpdatesToLocalDB();
+                            setInitialFieldValues();
                         }
                         else{
                             Toast.makeText(GoalsActivity.this, "failed to update goals", Toast.LENGTH_SHORT).show();
@@ -192,6 +193,7 @@ public class GoalsActivity extends Activity {
                         Log.e("in onResponse catch","in catch");
                         e.printStackTrace();
                     }
+                    submitButton.setClickable(true);
                 }
             };
 
@@ -280,8 +282,6 @@ public class GoalsActivity extends Activity {
 
     //check if fields have changed since the activity was loaded.
     private boolean fieldsHaveBeenEdited(){
-        Log.e(currentBodyWeight.getText().toString(), " bodyweight in validator");
-        Log.e(loadedCurrentBodyWeight, "orig bodyweight in validate");
         try {
             if (loadedCurrentBodyWeight.equals(currentBodyWeight.getText().toString()) &&
                     loadedGoalBodyWeight.equals(goalBodyWeight.getText().toString()) &&
@@ -324,7 +324,7 @@ public class GoalsActivity extends Activity {
         currentBodyWeight = (EditText) findViewById(R.id.current_bodyweight);
         goalBodyWeight = (EditText) findViewById(R.id.goal_bodyweight);
         calorieGoalEditText = (EditText) findViewById(R.id.calorie_goal);
-        submitButton = (Button) findViewById(R.id.submit_button);
+        submitButton = (Button) findViewById(R.id.goals_submit_button);
     }
 
     private void pullUpdatesToLocalDB(){

@@ -66,12 +66,6 @@ public class LocalDatabaseUpdater {
         SessionManager manager = SessionManager.getInstance(contextOfCallingActivity);
         String userID = manager.getUserID();
 
-
-        //If we are not connected to a network then we will not be able to read from the remote database and thus we
-        //won't be able to update the local database.
-        //
-        //By doing this check we will prevent the eventuality where we delete the local database entries and then fail to
-        //pull the updated entries from the remote database.
         ConnectivityManager cm = (ConnectivityManager)contextOfCallingActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
@@ -91,12 +85,6 @@ public class LocalDatabaseUpdater {
         SessionManager manager = SessionManager.getInstance(contextOfCallingActivity);
         String userID = manager.getUserID();
 
-
-        //If we are not connected to a network then we will not be able to read from the remote database and thus we
-        //won't be able to update the local database.
-        //
-        //By doing this check we will prevent the eventuality where we delete the local database entries and then fail to
-        //pull the updated entries from the remote database.
         ConnectivityManager cm = (ConnectivityManager)contextOfCallingActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
