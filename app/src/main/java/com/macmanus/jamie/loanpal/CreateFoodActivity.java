@@ -78,7 +78,7 @@ public class CreateFoodActivity extends Activity {
     }
 
     public void submitFood(View view) {
-
+        submitFoodButton.setClickable(false);
         if(validateForm()){
             Map<String, String> params = new HashMap<String, String>();
 
@@ -108,6 +108,7 @@ public class CreateFoodActivity extends Activity {
                         else{
                             Toast.makeText(CreateFoodActivity.this, "Failed to create food", Toast.LENGTH_SHORT).show();
                         }
+                        submitFoodButton.setClickable(true);
 
                     } catch (JSONException e) {
                         Log.e("in onResponse catch","in catch");
@@ -119,6 +120,7 @@ public class CreateFoodActivity extends Activity {
             Response.ErrorListener errorListener = new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
+                    submitFoodButton.setClickable(true);
                     if (error instanceof TimeoutError || error instanceof NoConnectionError) {
                         Toast.makeText(CreateFoodActivity.this, "no connection", Toast.LENGTH_SHORT).show();
                     } else if (error instanceof AuthFailureError) {

@@ -70,6 +70,7 @@ public class SignUpActivity extends Activity {
 
         //validate sign up elements
         if(validateEmail() && validatePassword() && validateConfirmPassword()){
+            submitButton.setClickable(false);
 
 
             final String emailAddr = emailView.getText().toString();
@@ -99,12 +100,11 @@ public class SignUpActivity extends Activity {
                         else{
                             Toast.makeText(SignUpActivity.this, "The sign up failed", Toast.LENGTH_SHORT).show();
                         }
-
-
                     } catch (JSONException e) {
                         Log.e("Failed try","in catch");
                         e.printStackTrace();
                     }
+                    submitButton.setClickable(true);
                 }
             };
             HashMap<String, String> params = new HashMap<String,String>();
@@ -114,6 +114,7 @@ public class SignUpActivity extends Activity {
             CustomRequest registerRequest = new CustomRequest(Request.Method.POST, REQUEST_DESTINATION, params, responseListener, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
+                    submitButton.setClickable(true);
                     if (error instanceof TimeoutError || error instanceof NoConnectionError) {
                         Toast.makeText(SignUpActivity.this, "no connection", Toast.LENGTH_SHORT).show();
                     } else if (error instanceof AuthFailureError) {

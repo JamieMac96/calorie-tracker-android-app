@@ -200,6 +200,7 @@ public class GoalsActivity extends Activity {
             Response.ErrorListener errorListener = new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
+                    submitButton.setClickable(true);
                     if (error instanceof TimeoutError || error instanceof NoConnectionError) {
                         Toast.makeText(GoalsActivity.this, "no connection", Toast.LENGTH_SHORT).show();
                     } else if (error instanceof AuthFailureError) {

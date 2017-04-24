@@ -236,6 +236,7 @@ public class FoodItemActivity extends AppCompatActivity{
         Response.ErrorListener errorListener = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                submitfoodButton.setClickable(true);
                 if (error instanceof TimeoutError || error instanceof NoConnectionError) {
                     Toast.makeText(FoodItemActivity.this, "no connection", Toast.LENGTH_SHORT).show();
                 } else if (error instanceof AuthFailureError) {
@@ -297,6 +298,7 @@ public class FoodItemActivity extends AppCompatActivity{
         Response.ErrorListener errorListener = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                submitfoodButton.setClickable(true);
                 if (error instanceof TimeoutError || error instanceof NoConnectionError) {
                     Toast.makeText(FoodItemActivity.this, "no connection", Toast.LENGTH_SHORT).show();
                 } else if (error instanceof AuthFailureError) {
@@ -480,18 +482,19 @@ public class FoodItemActivity extends AppCompatActivity{
                     else{
                         Toast.makeText(FoodItemActivity.this, "Failed to update food", Toast.LENGTH_SHORT).show();
                     }
-                    submitfoodButton.setClickable(true);
 
                 } catch (JSONException e) {
                     Toast.makeText(FoodItemActivity.this, "Failed to update food", Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 }
+                submitfoodButton.setClickable(true);
             }
         };
 
         Response.ErrorListener errorListener = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                submitfoodButton.setClickable(true);
                 if (error instanceof TimeoutError || error instanceof NoConnectionError) {
                     Toast.makeText(FoodItemActivity.this, "no connection", Toast.LENGTH_SHORT).show();
                 } else if (error instanceof AuthFailureError) {

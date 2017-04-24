@@ -146,6 +146,7 @@ public class LoginActivity extends AppCompatActivity {
         Response.ErrorListener errorListener = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                loginButton.setClickable(true);
                 if (error instanceof TimeoutError || error instanceof NoConnectionError) {
                     Toast.makeText(LoginActivity.this, "no connection", Toast.LENGTH_SHORT).show();
                 } else if (error instanceof AuthFailureError) {
