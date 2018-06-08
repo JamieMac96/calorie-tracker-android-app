@@ -15,7 +15,7 @@ This is a repo for my calorie tracking android application. The purpose of the
 ### Back end:
 * MySQL database.
 * PHP scripts to handle requests.
-* Hosted on an AWS EC2 instance to provide universal access.
+* Hosted on an AWS EC2 instance.
 
 # Functionality / Usage:
 * **Sign up:** Users sign up using an email and password.
