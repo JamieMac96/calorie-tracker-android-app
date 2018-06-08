@@ -1,11 +1,23 @@
 # Calorie Tracker Android App
 
-## Description:
+# Description:
 This is a repo for my calorie tracking android application. The purpose of the
  app is to allow users to track their daily calorie intake as well as track their
  bodyweightweight over time.
 
-## Functionality / Usage:
+# Technology
+### Front end:
+* XML components to provide the visual components of the user interface.
+* SQLite database to provide caching and offline functionality.
+* Java to provide functional capabilities such as activity navigation, click events etc.
+* Volley library for HTTP requests.
+
+### Back end:
+* MySQL database.
+* PHP scripts to handle requests.
+* Hosted on an AWS EC2 instance to provide universal access.
+
+# Functionality / Usage:
 * **Sign up:** Users sign up using an email and password.
 * **Login:** Users login also using an email and password.
 * **Food diary:** The main activity of the app displays a food diary containing
